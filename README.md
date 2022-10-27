@@ -34,7 +34,10 @@ Team iOS
 * [Mateusz Sowiński](https://github.com/wichurax)
 
 Team Android
-
+* [Krzysztof Jędraszek](https://github.com/kjedrasz2137)
+* [Jakub Szymański](https://github.com/Corax0x01)
+* [Filip Żemajtys](https://github.com/fzemi)
+* [Jan Kornacki](https://github.com/jankejc)
 ## Version History
 
 ## License
