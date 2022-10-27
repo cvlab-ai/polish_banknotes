@@ -38,6 +38,7 @@ Team Android
 * [Jakub Szymański](https://github.com/Corax0x01)
 * [Filip Żemajtys](https://github.com/fzemi)
 * [Jan Kornacki](https://github.com/jankejc)
+
 ## Version History
 
 ## License
