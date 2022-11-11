@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var model = FrameHandler()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "banknote")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, polish banknotes!")
-        }
-        .padding()
+        FrameView(image: model.frame)
+            .ignoresSafeArea()
     }
 }
 
