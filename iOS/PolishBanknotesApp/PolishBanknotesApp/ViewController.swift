@@ -6,10 +6,11 @@
 //
 
 import UIKit
-import AVFoundation
 import SwiftUI
+import AVFoundation
+import Vision
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var permissionGranted = false
     
     private let captureSession = AVCaptureSession()
@@ -18,12 +19,24 @@ class ViewController: UIViewController {
     private var previewLayer = AVCaptureVideoPreviewLayer()
     var screenRect: CGRect! = nil
     
+    private var videoOutput = AVCaptureVideoDataOutput()
+    var requests = [VNRequest]()
+    let identifierLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .systemBackground
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func viewDidLoad() {
         checkPermission()
         
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
+            self.setupLabel()
+            self.setupClassifier()
             self.captureSession.startRunning()
         }
     }
@@ -85,6 +98,11 @@ class ViewController: UIViewController {
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         
         previewLayer.connection?.videoOrientation = .portrait
+        
+        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
+        captureSession.addOutput(videoOutput)
+        
+        videoOutput.connection(with: .video)?.videoOrientation = .portrait
         
         DispatchQueue.main.async { [weak self] in
             self!.view.layer.addSublayer(self!.previewLayer)
