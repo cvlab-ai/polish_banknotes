@@ -9,13 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "banknote")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, polish banknotes!")
-        }
-        .padding()
+        HostedViewController()
+            .ignoresSafeArea()
     }
 }
 
