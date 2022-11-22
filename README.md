@@ -9,7 +9,7 @@ We're developing two versions of this application - one for Android and one for 
 * Android #TODO
 
 ### Neural network
-The neural network we're working on is based on TensorFlow+Keras Image classification.
+The neural network we're working on is based on TensorFlow+Keras Image classification. In future, we are planning using Object Classification for detecting coins.
 
 ### Datasets
 We're using datasets created by previous teams working on this subject (information about those are given in *Acknowledgments* section). About numbers, we currently have around 3500-4800 images per denomination, mostly in good quality with 0 or 1 banknote at it.
