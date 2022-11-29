@@ -161,7 +161,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         // When clicked, increase the number of objects that can be classified at a time
         fragmentCameraBinding.bottomSheetLayout.maxResultsPlus.setOnClickListener {
-            if (imageClassifierHelper.maxResults < 3) {
+            if (imageClassifierHelper.maxResults < 7) {
                 imageClassifierHelper.maxResults++
                 updateControlsUi()
                 classificationResultsAdapter.updateAdapterSize(size = imageClassifierHelper.maxResults)

@@ -66,10 +66,10 @@ _MODEL_INFO = {
             version="v2",
             image_width=224,
             image_height=224,
-            image_min=0.0,
-            image_max=1.0,
-            mean=[0],
-            std=[1],
+            image_min=0,
+            image_max=255,
+            mean=[0.0],
+            std=[1.0],
             num_classes=7,
             author="jankejc")
 }
