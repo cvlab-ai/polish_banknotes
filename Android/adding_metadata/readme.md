@@ -10,4 +10,4 @@
 
 5. In the bottom I have added the example of running python script. Running it from VScode was too problematic for me.
 
-`python ./metadata_writer_for_image_classifier.py --model_file=./model_with_metadata/MODEL_NAME.tflite --label_file=./labels.txt --export_directory=./model_with_metadata/python ./metadata_writer_for_image_classifier.py --model_file=./MODEL_NAME.tflite --label_file=./labels.txt --export_directory=model_with_metadata`
+`python ./metadata_writer_for_image_classifier.py --model_file=./model_with_metadata/MODEL_NAME.tflite --label_file=./labels.txt --export_directory=model_with_metadata`
