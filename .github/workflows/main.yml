@@ -23,6 +23,6 @@ jobs:
           distribution: 'zulu'
       - uses: gradle/gradle-build-action@v2
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x Android/PolishBanknotesApp/gradlew
       - name: Build project
         run: ./gradlew build --stacktrace
