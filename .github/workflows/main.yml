@@ -25,4 +25,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x Android/PolishBanknotesApp/gradlew
       - name: Build project
-        run: ./gradlew build --stacktrace
+        run: Android/PolishBanknotesApp/gradlew build --stacktrace
