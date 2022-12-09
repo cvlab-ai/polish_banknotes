@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification
+package pg.eti.project.polishbanknotes
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import org.tensorflow.lite.examples.imageclassification.databinding.ActivityMainBinding
+import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding

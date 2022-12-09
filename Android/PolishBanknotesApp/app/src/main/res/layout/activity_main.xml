@@ -13,6 +13,9 @@
     ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     ~ See the License for the specific language governing permissions and
     ~ limitations under the License.
+    ~ NOTE:
+    ~ The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
+    ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
 -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -37,7 +40,7 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
             android:layout_marginTop="?android:attr/actionBarSize"
-            tools:context=".MainActivity"/>
+            tools:context="pg.eti.project.polishbanknotes.imageclassification.MainActivity"/>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

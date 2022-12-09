@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification.fragments
+package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -36,10 +36,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import org.tensorflow.lite.examples.imageclassification.ImageClassifierHelper
-import org.tensorflow.lite.examples.imageclassification.R
-import org.tensorflow.lite.examples.imageclassification.databinding.FragmentCameraBinding
 import org.tensorflow.lite.task.vision.classifier.Classifications
+import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
+import pg.eti.project.polishbanknotes.ImageClassifierHelper
+import pg.eti.project.polishbanknotes.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

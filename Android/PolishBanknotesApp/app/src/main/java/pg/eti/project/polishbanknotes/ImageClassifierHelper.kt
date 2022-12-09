@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification
+package pg.eti.project.polishbanknotes
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -22,10 +22,8 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
 import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.Classifications

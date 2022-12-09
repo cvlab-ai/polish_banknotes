@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="org.tensorflow.lite.examples.imageclassification.fragments.PermissionsFragment"
+        android:name="pg.eti.project.polishbanknotes.imageclassification.fragments.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="org.tensorflow.lite.examples.imageclassification.fragments.CameraFragment"
+        android:name="pg.eti.project.polishbanknotes.imageclassification.fragments.CameraFragment"
         android:label="CameraFragment">
 
         <action

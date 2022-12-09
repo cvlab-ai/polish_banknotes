@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tensorflow.lite.examples.imageclassification
+package pg.eti.project.polishbanknotes.imageclassification
 
 import org.junit.Test
 

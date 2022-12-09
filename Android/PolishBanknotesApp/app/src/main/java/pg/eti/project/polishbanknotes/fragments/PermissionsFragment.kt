@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification.fragments
+package pg.eti.project.polishbanknotes.fragments
 
 import android.Manifest
 import android.content.Context
@@ -26,7 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import org.tensorflow.lite.examples.imageclassification.R
+import pg.eti.project.polishbanknotes.R
 
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
@@ -64,7 +64,7 @@ class PermissionsFragment : Fragment() {
     private fun navigateToCamera() {
         lifecycleScope.launchWhenStarted {
             Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                PermissionsFragmentDirections.actionPermissionsToCamera()
+                PermPermissionsFragmentDirections.actionPermissionsToCamera()
             )
         }
     }
