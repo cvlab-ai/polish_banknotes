@@ -27,7 +27,6 @@ plugins {
 }
 
 android {
-    namespace 'pg.eti.project.polishbanknotes'
     compileSdk 32
 
     defaultConfig {
