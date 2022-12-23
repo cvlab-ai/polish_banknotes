@@ -40,7 +40,7 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
             android:layout_marginTop="?android:attr/actionBarSize"
-            tools:context="pg.eti.project.polishbanknotes.imageclassification.MainActivity"/>
+            tools:context="pg.eti.project.polishbanknotes.MainActivity"/>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
