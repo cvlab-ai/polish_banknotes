@@ -18,13 +18,9 @@ package pg.eti.project.polishbanknotes
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import java.io.File
-
-private const val PERMISSION_REQUEST_CODE = 7
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -32,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Creating file to show the app folder in storage. TODO (snippet converted from JAVA)
+        // Creating file to show the app folder in storage.
         val directoryToStore: File? = baseContext.getExternalFilesDir("MlModelsFolder")
         if (!directoryToStore!!.exists()) {
             if (directoryToStore!!.mkdir());
