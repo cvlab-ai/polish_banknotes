@@ -86,7 +86,8 @@ class ImageClassifierHelper(
         // If latest model developed by AI devs is present than we pick it up.
         if (latestModel.exists()) {
             // Hiding model spinner and informing about the usage of latest model.
-            fragmentCameraBinding.bottomSheetLayout.spinnerModel.setTransitionVisibility(View.GONE)
+//            fragmentCameraBinding.bottomSheetLayout.spinnerModel.setTransitionVisibility(View.GONE) // minSDK 29
+            fragmentCameraBinding.bottomSheetLayout.spinnerModel.visibility = View.GONE // SDK could be 23
             fragmentCameraBinding.bottomSheetLayout.tvMlMode.setText("You are using latest_model.tflite!")
         } else {
             modelName =
