@@ -258,6 +258,7 @@
             android:layout_marginTop="@dimen/bottom_sheet_default_row_margin">
 
             <TextView
+                android:id="@+id/tv_ml_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_models"

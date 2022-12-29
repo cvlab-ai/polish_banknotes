@@ -48,8 +48,7 @@
 
     <string-array name="models_spinner_titles">
         <item>MobileNet V1</item>
-        <!--<item>EfficientNet Lite0</item>
-        <item>EfficientNet Lite1</item>-->
-        <item>Polish Banknotes</item>
+<!--        <item>Latest Model</item>-->
+<!--        <item>Flower Model</item>-->
     </string-array>
 </resources>

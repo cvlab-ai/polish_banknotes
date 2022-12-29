@@ -21,6 +21,7 @@ import android.graphics.Bitmap
 import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
+import android.view.View
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -28,6 +29,10 @@ import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
+import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
+import pg.eti.project.polishbanknotes.fragments.CameraFragment
+import java.io.File
+
 
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
@@ -36,7 +41,8 @@ class ImageClassifierHelper(
     var currentDelegate: Int = 0,
     var currentModel: Int = 0,
     val context: Context,
-    val imageClassifierListener: ClassifierListener?
+    val imageClassifierListener: ClassifierListener?,
+    val fragmentCameraBinding: FragmentCameraBinding
 ) {
     private var imageClassifier: ImageClassifier? = null
 
@@ -73,18 +79,32 @@ class ImageClassifierHelper(
 
         optionsBuilder.setBaseOptions(baseOptionsBuilder.build())
 
-        val modelName =
-            when (currentModel) {
-                MODEL_MOBILENETV1 -> "mobilenetv1.tflite"
-                MODEL_POLISH_BANKNOTES -> "model_1_0.tflite"
-                /*MODEL_EFFICIENTNETV0 -> "efficientnet-lite0.tflite"
-                MODEL_EFFICIENTNETV1 -> "efficientnet-lite1.tflite"*/
-                else -> "mobilenetv1.tflite"
-            }
+        // Won't by null, but in case I can put descriptive text.
+        var modelName = "No specified file!"
+        val latestModel = File(context.getExternalFilesDir("MlModelsFolder"), "latest_model.tflite")
+
+        // If latest model developed by AI devs is present than we pick it up.
+        if (latestModel.exists()) {
+            // Hiding model spinner and informing about the usage of latest model.
+            fragmentCameraBinding.bottomSheetLayout.spinnerModel.setTransitionVisibility(View.GONE)
+            fragmentCameraBinding.bottomSheetLayout.tvMlMode.setText("You are using latest_model.tflite!")
+        } else {
+            modelName =
+                when (currentModel) {
+                    MODEL_MOBILENETV1 -> "mobilenetv1.tflite"
+//                    MODEL_FLOWER_MODEL -> "FlowerModel.tflite"
+                    else -> "mobilenetv1.tflite"
+                }
+        }
 
         try {
-            imageClassifier =
-                ImageClassifier.createFromFileAndOptions(context, modelName, optionsBuilder.build())
+            if (latestModel.exists())
+                imageClassifier = ImageClassifier
+                    .createFromFileAndOptions(latestModel, optionsBuilder.build())
+            else
+                imageClassifier = ImageClassifier
+                    .createFromFileAndOptions(context, modelName, optionsBuilder.build())
+
         } catch (e: IllegalStateException) {
             imageClassifierListener?.onError(
                 "Image classifier failed to initialize. See error logs for details"
@@ -154,9 +174,7 @@ class ImageClassifierHelper(
         const val DELEGATE_GPU = 1
         const val DELEGATE_NNAPI = 2
         const val MODEL_MOBILENETV1 = 0
-        /*const val MODEL_EFFICIENTNETV0 = 1
-        const val MODEL_EFFICIENTNETV1 = 2*/
-        const val MODEL_POLISH_BANKNOTES = 1
+//        const val MODEL_FLOWER_MODEL = 1
 
         private const val TAG = "ImageClassifierHelper"
     }
