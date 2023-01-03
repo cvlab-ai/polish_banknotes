@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification
+package pg.eti.project.polishbanknotes
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import org.tensorflow.lite.examples.imageclassification.databinding.ActivityMainBinding
+import androidx.appcompat.app.AppCompatActivity
+import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Creating file to show the app folder in storage.
+        val directoryToStore: File? = baseContext.getExternalFilesDir("MlModelsFolder")
+        if (!directoryToStore!!.exists()) {
+            if (directoryToStore!!.mkdir());
+        }
+
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(activityMainBinding.root)
+        val viewMain = activityMainBinding.root
+        setContentView(viewMain)
     }
 
     override fun onBackPressed() {

@@ -13,11 +13,15 @@
     ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     ~ See the License for the specific language governing permissions and
     ~ limitations under the License.
+    ~
+    ~ NOTE:
+    ~ The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
+    ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.tensorflow.lite.examples.imageclassification">
+    package="pg.eti.project.polishbanknotes">
 
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
@@ -38,7 +42,7 @@
         tools:ignore="AllowBackup">
 
         <activity
-            android:name=".MainActivity"
+            android:name="pg.eti.project.polishbanknotes.MainActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true"
@@ -50,7 +54,6 @@
             <!-- Main app intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 

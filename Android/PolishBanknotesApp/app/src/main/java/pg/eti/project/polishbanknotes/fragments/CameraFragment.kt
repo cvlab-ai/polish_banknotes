@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification.fragments
+package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -25,23 +25,20 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
+import androidx.appcompat.widget.AppCompatSpinner
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import org.tensorflow.lite.examples.imageclassification.ImageClassifierHelper
-import org.tensorflow.lite.examples.imageclassification.R
-import org.tensorflow.lite.examples.imageclassification.databinding.FragmentCameraBinding
 import org.tensorflow.lite.task.vision.classifier.Classifications
+import pg.eti.project.polishbanknotes.ImageClassifierHelper
+import pg.eti.project.polishbanknotes.R
+import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
@@ -100,7 +97,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         super.onViewCreated(view, savedInstanceState)
 
         imageClassifierHelper =
-            ImageClassifierHelper(context = requireContext(), imageClassifierListener = this)
+            ImageClassifierHelper(
+                context = requireContext(),
+                imageClassifierListener = this,
+                fragmentCameraBinding = fragmentCameraBinding
+            )
 
         with(fragmentCameraBinding.recyclerviewResults) {
             layoutManager = LinearLayoutManager(requireContext())

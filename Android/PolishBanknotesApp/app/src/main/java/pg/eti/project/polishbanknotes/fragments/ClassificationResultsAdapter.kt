@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.imageclassification.fragments
+package pg.eti.project.polishbanknotes.fragments
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.tensorflow.lite.examples.imageclassification.databinding.ItemClassificationResultBinding
+import pg.eti.project.polishbanknotes.databinding.ItemClassificationResultBinding
 import org.tensorflow.lite.support.label.Category
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import kotlin.math.min

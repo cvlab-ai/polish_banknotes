@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+* The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
+* on above license. Every change has been made or approved by me (https://github.com/jankejc).
+*/
 
 plugins {
     id 'com.android.application'
@@ -26,11 +30,11 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "org.tensorflow.lite.examples.imageclassification"
+        applicationId "pg.eti.project.polishbanknotes"
         minSdk 23
-        targetSdk 32
+        targetSdk 31
         versionCode 1
-        versionName "1.0"
+        versionName "0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -12,9 +12,12 @@
         ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         ~ See the License for the specific language governing permissions and
         ~ limitations under the License.
+        ~ NOTE:
+        ~ The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
+        ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
     -->
 <resources>
-    <string name="app_name">TFLite Image Classification</string>
+    <string name="app_name">Polskie Banknoty</string>
 
     <string name="alt_bottom_sheet_chevron">Bottom sheet expandable indicator</string>
 
@@ -45,8 +48,7 @@
 
     <string-array name="models_spinner_titles">
         <item>MobileNet V1</item>
-        <!--<item>EfficientNet Lite0</item>
-        <item>EfficientNet Lite1</item>-->
-        <item>Polish Banknotes</item>
+<!--        <item>Latest Model</item>-->
+<!--        <item>Flower Model</item>-->
     </string-array>
 </resources>
