@@ -25,7 +25,6 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -34,6 +33,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
+import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
@@ -61,6 +61,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
+    private var lastResultLabel: String = ""
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -348,6 +349,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             classificationResultsAdapter.notifyDataSetChanged()
             fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
                 String.format("%d ms", inferenceTime)
+
+            // Say the label.
+            val label = results!![0].categories[0].label
+            if (label != lastResultLabel) {
+                (activity as MainActivity?)!!.speak(label)
+                lastResultLabel = label
+            }
         }
     }
 }

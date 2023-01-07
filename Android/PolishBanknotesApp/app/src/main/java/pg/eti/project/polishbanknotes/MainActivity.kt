@@ -16,17 +16,46 @@
 
 package pg.eti.project.polishbanknotes
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import java.io.File
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
+    private lateinit  var mTTS: TextToSpeech
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Setting TalkBack
+        mTTS = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = mTTS.setLanguage(Locale.getDefault())
+                if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED
+                ) {
+                    // TODO set english language as a backup language
+                    Log.e("TTS", "Language not supported")
+                } else {
+                    //mButtonSpeak.setEnabled(true) -> in example
+                    Log.i("TTS", "Language set: ${Locale.getDefault()}")
+                }
+            } else {
+                Log.e("TTS", "Initialization failed")
+            }
+        }
 
         // Creating file to show the app folder in storage.
         val directoryToStore: File? = baseContext.getExternalFilesDir("MlModelsFolder")
@@ -34,9 +63,14 @@ class MainActivity : AppCompatActivity() {
             if (directoryToStore!!.mkdir());
         }
 
+        // Main inflation
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         val viewMain = activityMainBinding.root
         setContentView(viewMain)
+    }
+
+    fun speak(text: String) {
+        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     override fun onBackPressed() {
@@ -47,5 +81,13 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onDestroy() {
+        if (mTTS != null) {
+            mTTS.stop()
+            mTTS.shutdown()
+        }
+        super.onDestroy()
     }
 }

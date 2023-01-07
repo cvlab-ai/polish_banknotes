@@ -57,6 +57,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Apps targeting Android 11 -->
+<!--            <queries>-->
+<!--                <intent>-->
+<!--                    <action android:name="android.intent.action.TTS_SERVICE" />-->
+<!--                </intent>-->
+<!--            </queries>-->
+
             <!-- Declare notch support -->
             <meta-data
                 android:name="android.notch_support"
