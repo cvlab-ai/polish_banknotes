@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Setting TalkBack
+        // Setting TextToSpeech (TalkBack)
         mTTS = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 val result = mTTS.setLanguage(Locale.getDefault())
