@@ -29,11 +29,14 @@ import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
+import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragment
 import java.io.File
 
-
+// TODO: hold/resume classifier for user mode purpose
+// hold + long vibration: after finding the banknote + stop vibrating
+// resume: after touching the screen + start cyclic vibrations
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
     var numThreads: Int = 1,
@@ -42,6 +45,7 @@ class ImageClassifierHelper(
     var currentModel: Int = 0,
     val context: Context,
     val imageClassifierListener: ClassifierListener?,
+    // TODO REDUNDANT: is this needed? Can't I access from here?
     val fragmentCameraBinding: FragmentCameraBinding
 ) {
     private var imageClassifier: ImageClassifier? = null
@@ -89,6 +93,9 @@ class ImageClassifierHelper(
 //            fragmentCameraBinding.bottomSheetLayout.spinnerModel.setTransitionVisibility(View.GONE) // minSDK 29
             fragmentCameraBinding.bottomSheetLayout.spinnerModel.visibility = View.GONE // SDK could be 23
             fragmentCameraBinding.bottomSheetLayout.tvMlMode.setText("You are using latest_model.tflite!")
+            // TODO URGENT crash when changing classifier options:
+            // android.view.ViewRootImpl$CalledFromWrongThreadException:
+            // Only the original thread that created a view hierarchy can touch its views.
         } else {
             modelName =
                 when (currentModel) {

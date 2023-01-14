@@ -31,10 +31,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_camera.view.*
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
+import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -61,7 +64,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private var lastResultLabel: String = ""
+    private var lastResultLabel = ""
+    private var classificationActive = true
+//    private var doVibrate = true
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -114,6 +119,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         fragmentCameraBinding.viewFinder.post {
             // Set up the camera and its use cases
             setUpCamera()
+        }
+
+        // Turning on classification by clicking on camera.
+        // It needs to work even when it is in dev mode, because someone
+        // could turn the dev mode back on and not turn the classification.
+        fragmentCameraBinding.root.view_finder.setOnClickListener {
+            classificationActive = true
         }
 
         // Attach listeners to UI control widgets
@@ -325,8 +337,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // Copy out RGB bits to the shared bitmap buffer
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
 
-        // Pass Bitmap and rotation to the image classifier helper for processing and classification
-        imageClassifierHelper.classify(bitmapBuffer, getScreenOrientation())
+        if (classificationActive) {
+            // Pass Bitmap and rotation to the image classifier helper for processing and classification
+            imageClassifierHelper.classify(bitmapBuffer, getScreenOrientation())
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -344,18 +358,49 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         inferenceTime: Long
     ) {
         activity?.runOnUiThread {
-            // Show result on bottom sheet
+        // Show result on bottom sheet
             classificationResultsAdapter.updateResults(results)
             classificationResultsAdapter.notifyDataSetChanged()
             fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
                 String.format("%d ms", inferenceTime)
 
-            // Say the label.
+        // Say the label.
             val label = results!![0].categories[0].label
-            if (label != lastResultLabel) {
-                (activity as MainActivity?)!!.speak(label)
-                lastResultLabel = label
+
+            // Snippet to have active/inactive classification
+            if (label != "None"
+                && fragmentCameraBinding.root.recyclerview_results.visibility == View.GONE) {
+                // Stop classifying only when in blind-user mode.
+                (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                classificationActive = false
+//                doVibrate = false
+
+            } else if (label != lastResultLabel && label != "None") {
+                // Speak on changed banknote.
+                // (dev mode + maybe in user mode because of USE-CASE #1)
+                // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
+                //  banknote instead of previous, the app won't speak. Is this possible?
+                (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                // TODO TOO DIRECT: accessing val from here; maybe create abstract class
+                //  for accessibility functionalities?
+                // TODO LEARN: how are fragments run, there is no call anywhere.
+
+            } else if (label == "None") {
+                // Start vibrating when the label is "None".
+//                doVibrate = true
             }
+            lastResultLabel = label
+
+//            if (doVibrate) {
+//                (activity as MainActivity?)!!.vibrateDevice()
+//            }
+
+
+            // TODO: any test, exception, else?
+            // TODO: test use cases
+            // TODO PERFORMANCE: is this not slow?
+
+            // quite working
         }
     }
 }

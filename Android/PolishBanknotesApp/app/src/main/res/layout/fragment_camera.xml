@@ -46,6 +46,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <View
+        android:id="@+id/wrap_content"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:background="@color/bounding_box_color"
