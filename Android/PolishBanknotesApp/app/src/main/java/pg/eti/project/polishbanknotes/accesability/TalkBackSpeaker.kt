@@ -33,7 +33,7 @@ class TalkBackSpeaker(private val context: Context) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
-    // Function to stop TextToSpeech working.
+    // Function to stop TextToSpeech service working.
     fun stop() {
         if (textToSpeech != null) {
             textToSpeech.stop()
