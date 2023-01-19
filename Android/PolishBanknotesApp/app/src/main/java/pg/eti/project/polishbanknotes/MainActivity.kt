@@ -16,19 +16,13 @@
 
 package pg.eti.project.polishbanknotes
 
-import android.content.Context
 import android.os.*
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_camera.view.*
 import pg.eti.project.polishbanknotes.accesability.Haptizer
 import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import java.io.File
 
-// TODO MODULARITY: separate TTS and so on to separate classes (it is common?)
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
@@ -53,24 +47,6 @@ class MainActivity : AppCompatActivity() {
         // Accessibility features initialization.
         talkBackSpeaker = TalkBackSpeaker(this)
         haptizer = Haptizer(this)
-
-        // TODO MODULARITY
-        // Toggle dev and user mode by clicking the TFL logo.
-        viewMain.toolbar.setOnClickListener {
-            if (viewMain.fragment_container.recyclerview_results.visibility == View.GONE) {
-                viewMain.fragment_container.recyclerview_results.visibility = View.VISIBLE
-                viewMain.fragment_container.bottom_sheet_layout.visibility = View.VISIBLE
-                viewMain.fragment_container.wrap_content.visibility = View.VISIBLE
-
-
-            } else if (viewMain.fragment_container.
-                recyclerview_results.visibility == View.VISIBLE) {
-                viewMain.fragment_container.recyclerview_results.visibility = View.GONE
-                viewMain.fragment_container.bottom_sheet_layout.visibility = View.GONE
-                viewMain.fragment_container.wrap_content.visibility = View.GONE
-            }
-            // TODO else exceptions here, any test?
-        }
     }
 
     override fun onBackPressed() {

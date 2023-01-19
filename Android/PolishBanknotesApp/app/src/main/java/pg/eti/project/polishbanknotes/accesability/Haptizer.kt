@@ -11,13 +11,13 @@ import androidx.core.content.ContextCompat.getSystemService
 
 class Haptizer(context: Context) {
     private var haptizer: Vibrator
-    private val haptizerTimings = arrayOf<Long>(0, 1000).toLongArray()
+    private val haptizerTimings = longArrayOf(1000, 35)
 
     init {
         // Setting the haptizer.
         // TODO DEVICE SPECS: check if the device has needed options for haptic feedback.
         // TODO EXCEPTION: Do sth with this "ClassNullException".
-        haptizer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        haptizer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val haptizerManager =
                 context.getSystemService(VIBRATOR_MANAGER_SERVICE) as? VibratorManager
             haptizerManager!!.defaultVibrator
@@ -29,9 +29,10 @@ class Haptizer(context: Context) {
     }
 
     /**
-     * Function to start cyclic vibrations with the Oreo (8.0: api 26) or higher android version.
+     * Function to start cyclic vibrations with the Snow Cone (12.0: api 31) or higher android
+     * version.
      */
-    fun startOreo() {
+    fun startSnowCone() {
         // TODO EXCEPTION?: does it need test, or else, or exception etc.
         haptizer.let {
             it.vibrate(VibrationEffect.createWaveform(haptizerTimings, 0))
@@ -39,7 +40,8 @@ class Haptizer(context: Context) {
     }
 
     /**
-     * Function purpose id to make single vibration for below Oreo (8.0: api 26) android version.
+     * Function purpose id to make single vibration for below Snow Cone (12.0: api 31) android
+     * version.
      */
     fun vibrateShot() {
         // TODO EXCEPTION?: does it need test, or else, or exception etc.

@@ -22,6 +22,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -34,9 +35,9 @@ import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragment
 import java.io.File
 
-// TODO: hold/resume classifier for user mode purpose
-// hold + long vibration: after finding the banknote + stop vibrating
-// resume: after touching the screen + start cyclic vibrations
+/**
+ * The class computes calculations and manage models.
+ */
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
     var numThreads: Int = 1,
@@ -45,8 +46,8 @@ class ImageClassifierHelper(
     var currentModel: Int = 0,
     val context: Context,
     val imageClassifierListener: ClassifierListener?,
-    // TODO REDUNDANT: is this needed? Can't I access from here?
-    val fragmentCameraBinding: FragmentCameraBinding
+    private val uiManager: UiManager,
+    val activity: FragmentActivity
 ) {
     private var imageClassifier: ImageClassifier? = null
 
@@ -83,19 +84,16 @@ class ImageClassifierHelper(
 
         optionsBuilder.setBaseOptions(baseOptionsBuilder.build())
 
-        // Won't by null, but in case I can put descriptive text.
+        // Won't be null, but if, I can put descriptive text.
         var modelName = "No specified file!"
         val latestModel = File(context.getExternalFilesDir("MlModelsFolder"), "latest_model.tflite")
 
         // If latest model developed by AI devs is present than we pick it up.
         if (latestModel.exists()) {
             // Hiding model spinner and informing about the usage of latest model.
-//            fragmentCameraBinding.bottomSheetLayout.spinnerModel.setTransitionVisibility(View.GONE) // minSDK 29
-            fragmentCameraBinding.bottomSheetLayout.spinnerModel.visibility = View.GONE // SDK could be 23
-            fragmentCameraBinding.bottomSheetLayout.tvMlMode.setText("You are using latest_model.tflite!")
-            // TODO URGENT crash when changing classifier options:
-            // android.view.ViewRootImpl$CalledFromWrongThreadException:
-            // Only the original thread that created a view hierarchy can touch its views.
+            activity?.runOnUiThread {
+                uiManager.hideOtherModelsOption()
+            }
         } else {
             modelName =
                 when (currentModel) {

@@ -31,7 +31,7 @@
 
     <!-- Declare permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- TODO manage permissions in PermissionsFragment -->
+    <!-- TODO manage permission in PermissionsFragment -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application

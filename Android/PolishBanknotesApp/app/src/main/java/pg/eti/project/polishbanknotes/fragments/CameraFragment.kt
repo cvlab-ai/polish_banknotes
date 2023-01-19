@@ -32,13 +32,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_camera.view.*
+
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
-import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
+import pg.eti.project.polishbanknotes.UiManager
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -75,6 +74,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var haptizerActive = true
     private var wasHaptizerActive = false
     private var inferenceCounter: Int = 0
+    private lateinit var uiManager: UiManager
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -110,11 +110,15 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Prepare UI manager for mode switch.
+        uiManager = UiManager(fragmentCameraBinding)
+
         imageClassifierHelper =
             ImageClassifierHelper(
                 context = requireContext(),
                 imageClassifierListener = this,
-                fragmentCameraBinding = fragmentCameraBinding
+                uiManager = uiManager,
+                activity = requireActivity()
             )
 
         with(fragmentCameraBinding.recyclerviewResults) {
@@ -134,13 +138,16 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
          * It needs to work even when it is in dev mode, because someone
          * could turn the dev mode back on and not turn the classification.
          */
-        fragmentCameraBinding.root.view_finder.setOnClickListener {
+        fragmentCameraBinding.viewFinder.setOnClickListener {
             classificationActive = true
             haptizerActive = true
         }
 
         // Attach listeners to UI control widgets
         initBottomSheetControls()
+
+        // Attach listeners to UI components to manage it.
+        initModeSwitchListeners()
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -249,6 +256,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             }
     }
 
+    private fun initModeSwitchListeners() {
+        // Toggle dev and user mode by clicking the TFL logo.
+        fragmentCameraBinding.toolbar.setOnClickListener {
+            if (fragmentCameraBinding.recyclerviewResults.visibility == View.GONE) {
+                // Show bottom sheet controls.
+                // Every UI change must be done on UI thread.
+                activity?.runOnUiThread {
+                    uiManager.showBottomSheetControls()
+                }
+            } else if (fragmentCameraBinding.recyclerviewResults.visibility == View.VISIBLE) {
+                // Hide bottom sheet controls.
+                // Every UI change must be done on UI thread.
+                activity?.runOnUiThread {
+                    uiManager.hideBottomSheetControls()
+                }
+            }
+            // TODO else exceptions here, any test?
+        }
+    }
+
     // Update the values displayed in the bottom sheet. Reset classifier.
     private fun updateControlsUi() {
         fragmentCameraBinding.bottomSheetLayout.maxResultsValue.text =
@@ -331,7 +358,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         val outMetrics = DisplayMetrics()
 
         val display: Display?
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             display = requireActivity().display
             //display?.getRealMetrics(outMetrics)
         } else {
@@ -383,7 +410,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             // Snippet to have active/inactive classification
             if (label != "None"
-                && fragmentCameraBinding.root.recyclerview_results.visibility == View.GONE) {
+                && fragmentCameraBinding.recyclerviewResults.visibility == View.GONE) {
                 // Stop classifying only when in blind-user mode.
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
                 classificationActive = false
@@ -410,9 +437,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
              * thus it would start haptizer every time.
              */
             // TODO TEST ON DEVICE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                /**
+                 * Haptizer tested on: Samsung S21 5G
+                 */
                 if (haptizerActive && !wasHaptizerActive) {
-                    (activity as MainActivity?)!!.haptizer.startOreo()
+                    (activity as MainActivity?)!!.haptizer.startSnowCone()
                     wasHaptizerActive = true
                 } else if (!haptizerActive && wasHaptizerActive) {
                     (activity as MainActivity?)!!.haptizer.stop()
