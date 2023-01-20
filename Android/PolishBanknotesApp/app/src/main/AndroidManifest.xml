@@ -20,8 +20,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="pg.eti.project.polishbanknotes">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
