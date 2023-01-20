@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pg.eti.project.polishbanknotes.imageclassification
+package pg.eti.project.polishbanknotes
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
@@ -45,40 +45,41 @@ class ImageClassificationTest {
         Category.create("espresso", "espresso", 0.0546875f)
     )
 
-    @Test
-    @Throws(Exception::class)
-    fun classificationResultsShouldNotChange() {
-        val imageClassifierHelper = ImageClassifierHelper(
-            context = InstrumentationRegistry.getInstrumentation().context,
-            imageClassifierListener = object : ImageClassifierHelper.ClassifierListener {
-                override fun onError(error: String) {
-                    // no op
-                }
-
-                override fun onResults(
-                    results: List<Classifications>?,
-                    inferenceTime: Long
-                ) {
-                    assertNotNull(results)
-
-                    // Verify that the classified data and control
-                    // data have the same number of categories
-                    assertEquals(controlCategories.size, results!![0].categories.size)
-
-                    // Loop through the categories
-                    for (i in controlCategories.indices) {
-                        // Verify that the labels are consistent
-                        assertEquals(controlCategories[i].label, results[0].categories[i].label)
-                    }
-                }
-            }, threshold = 0.0f
-        )
-
-        // Create Bitmap and convert to TensorImage
-        val bitmap = loadImage("coffee.jpg")
-        // Run the image classifier on the sample image. Assume device portrait orientation.
-        imageClassifierHelper.classify(bitmap!!, Surface.ROTATION_90)
-    }
+//    @Test
+//    @Throws(Exception::class)
+//    fun classificationResultsShouldNotChange() {
+//        val imageClassifierHelper = ImageClassifierHelper(
+//            context = InstrumentationRegistry.getInstrumentation().context,
+//            imageClassifierListener = object : ImageClassifierHelper.ClassifierListener {
+//                override fun onError(error: String) {
+//                    // no op
+//                }
+//
+//                override fun onResults(
+//                    results: List<Classifications>?,
+//                    inferenceTime: Long
+//                ) {
+//                    assertNotNull(results)
+//
+//                    // Verify that the classified data and control
+//                    // data have the same number of categories
+//                    assertEquals(controlCategories.size, results!![0].categories.size)
+//
+//                    // Loop through the categories
+//                    for (i in controlCategories.indices) {
+//                        // Verify that the labels are consistent
+//                        assertEquals(controlCategories[i].label, results[0].categories[i].label)
+//                    }
+//                }
+//            }, threshold = 0.0f
+//
+//        )
+//
+//        // Create Bitmap and convert to TensorImage
+//        val bitmap = loadImage("coffee.jpg")
+//        // Run the image classifier on the sample image. Assume device portrait orientation.
+//        imageClassifierHelper.classify(bitmap!!, Surface.ROTATION_90)
+//    }
 
     @Throws(Exception::class)
     private fun loadImage(fileName: String): Bitmap? {

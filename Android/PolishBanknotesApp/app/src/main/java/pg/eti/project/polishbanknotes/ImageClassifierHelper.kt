@@ -91,7 +91,7 @@ class ImageClassifierHelper(
         // If latest model developed by AI devs is present than we pick it up.
         if (latestModel.exists()) {
             // Hiding model spinner and informing about the usage of latest model.
-            activity?.runOnUiThread {
+            activity.runOnUiThread {
                 uiManager.hideOtherModelsOption()
             }
         } else {

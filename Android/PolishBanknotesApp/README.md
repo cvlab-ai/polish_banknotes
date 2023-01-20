@@ -1,10 +1,10 @@
 # Polish banknotes Android app
 The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
-on the license shown in variuos files (http://www.apache.org/licenses/LICENSE-2.0). 
+on the license shown in various files (http://www.apache.org/licenses/LICENSE-2.0). 
 Every change has been made or approved by me (https://github.com/jankejc).
 Copyright.
 
-## Basic overwiew.
+## Basic overview.
 The app has two modes: dev and user. To go into user mode you need to click TensorFlow image at the top of the screen. 
 
 ## Modes description.
