@@ -65,10 +65,6 @@ android {
         noCompress 'tflite'
     }
 
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
-
     lintOptions {
         abortOnError false
         check 'NewApi'
