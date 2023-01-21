@@ -1,6 +1,6 @@
 //
 //  predictionsExtension.swift
-//  CameraTest
+//  PolishBanknotesApp
 //
 //  Created by Miłosz Chojnacki on 19/01/2023.
 //
