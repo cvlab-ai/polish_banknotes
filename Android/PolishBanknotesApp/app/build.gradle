@@ -28,13 +28,14 @@ plugins {
 
 android {
     compileSdk 32
+    namespace 'pg.eti.project.polishbanknotes'
 
     defaultConfig {
         applicationId "pg.eti.project.polishbanknotes"
         minSdk 23
         targetSdk 31
         versionCode 1
-        versionName "0.3"
+        versionName "0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -62,6 +63,11 @@ android {
 
     androidResources {
         noCompress 'tflite'
+    }
+
+    lintOptions {
+        abortOnError false
+        check 'NewApi'
     }
 }
 

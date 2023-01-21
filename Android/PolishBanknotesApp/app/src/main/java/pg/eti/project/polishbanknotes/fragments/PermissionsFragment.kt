@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("IntroduceWhenSubject")
+
 package pg.eti.project.polishbanknotes.fragments
 
 import android.Manifest

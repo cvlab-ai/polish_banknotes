@@ -19,26 +19,34 @@ package pg.eti.project.polishbanknotes.fragments
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
+import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
+import pg.eti.project.polishbanknotes.UiManager
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+/**
+ * I want device to vibrate every 1s, so if I assume that older device is inferencing
+ * ~200ms so 5 of them will give me about 1s. The accuracy is not that important.
+ */
+const val INFERENCE_COUNTER_FOR_OLDER_DEVICES = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
@@ -61,6 +69,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
+    private var lastResultLabel = ""
+    private var classificationActive = true
+    private var haptizerActive = true
+    private var wasHaptizerActive = false
+    private var inferenceCounter: Int = 0
+    private lateinit var uiManager: UiManager
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -96,11 +110,15 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Prepare UI manager for mode switch.
+        uiManager = UiManager(fragmentCameraBinding)
+
         imageClassifierHelper =
             ImageClassifierHelper(
                 context = requireContext(),
                 imageClassifierListener = this,
-                fragmentCameraBinding = fragmentCameraBinding
+                uiManager = uiManager,
+                activity = requireActivity()
             )
 
         with(fragmentCameraBinding.recyclerviewResults) {
@@ -115,8 +133,21 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
         }
 
+        /**
+         * Turning on classification by clicking on camera.
+         * It needs to work even when it is in dev mode, because someone
+         * could turn the dev mode back on and not turn the classification.
+         */
+        fragmentCameraBinding.viewFinder.setOnClickListener {
+            classificationActive = true
+            haptizerActive = true
+        }
+
         // Attach listeners to UI control widgets
         initBottomSheetControls()
+
+        // Attach listeners to UI components to manage it.
+        initModeSwitchListeners()
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -225,6 +256,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             }
     }
 
+    private fun initModeSwitchListeners() {
+        // Toggle dev and user mode by clicking the TFL logo.
+        fragmentCameraBinding.toolbar.setOnClickListener {
+            if (fragmentCameraBinding.recyclerviewResults.visibility == View.GONE) {
+                // Show bottom sheet controls.
+                // Every UI change must be done on UI thread.
+                activity?.runOnUiThread {
+                    uiManager.showBottomSheetControls()
+                }
+            } else if (fragmentCameraBinding.recyclerviewResults.visibility == View.VISIBLE) {
+                // Hide bottom sheet controls.
+                // Every UI change must be done on UI thread.
+                activity?.runOnUiThread {
+                    uiManager.hideBottomSheetControls()
+                }
+            }
+            // TODO else exceptions here, any test?
+        }
+    }
+
     // Update the values displayed in the bottom sheet. Reset classifier.
     private fun updateControlsUi() {
         fragmentCameraBinding.bottomSheetLayout.maxResultsValue.text =
@@ -307,7 +358,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         val outMetrics = DisplayMetrics()
 
         val display: Display?
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             display = requireActivity().display
             //display?.getRealMetrics(outMetrics)
         } else {
@@ -324,8 +375,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // Copy out RGB bits to the shared bitmap buffer
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
 
-        // Pass Bitmap and rotation to the image classifier helper for processing and classification
-        imageClassifierHelper.classify(bitmapBuffer, getScreenOrientation())
+        if (classificationActive) {
+            // Pass Bitmap and rotation to the image classifier helper for processing and classification
+            imageClassifierHelper.classify(bitmapBuffer, getScreenOrientation())
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -343,11 +396,68 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         inferenceTime: Long
     ) {
         activity?.runOnUiThread {
-            // Show result on bottom sheet
+        // Show result on bottom sheet
             classificationResultsAdapter.updateResults(results)
             classificationResultsAdapter.notifyDataSetChanged()
             fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
                 String.format("%d ms", inferenceTime)
+
+        // Say the label.
+        // TODO: any test, exception, else?
+        // TODO: test use cases
+        // TODO PERFORMANCE: is this not slow?
+            val label = results!![0].categories[0].label
+
+            // Snippet to have active/inactive classification
+            if (label != "None"
+                && fragmentCameraBinding.recyclerviewResults.visibility == View.GONE) {
+                // Stop classifying only when in blind-user mode.
+                (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                classificationActive = false
+                haptizerActive = false
+
+            } else if (label != "None" && label != lastResultLabel) {
+                // Speak on changed banknote.
+                // (dev mode + maybe in user mode because of USE-CASE #1)
+                // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
+                //  banknote instead of previous, the app won't speak. Is this possible?
+                (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                // TODO TOO DIRECT: accessing val from here; maybe create abstract class
+                //  for accessibility functionalities?
+                // TODO LEARN: how are fragments run, there is no call anywhere.
+            } else if (label == "None") {
+                // Start vibrating when the label is "None".
+                haptizerActive = true
+            }
+            lastResultLabel = label
+
+            /**
+             * Run, pause haptizer service.
+             * It needs to be controlled by two variables because it will be run every inference
+             * thus it would start haptizer every time.
+             */
+            // TODO TEST ON DEVICE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                /**
+                 * Haptizer tested on: Samsung S21 5G
+                 */
+                if (haptizerActive && !wasHaptizerActive) {
+                    (activity as MainActivity?)!!.haptizer.startSnowCone()
+                    wasHaptizerActive = true
+                } else if (!haptizerActive && wasHaptizerActive) {
+                    (activity as MainActivity?)!!.haptizer.stop()
+                    wasHaptizerActive = false
+                }
+            } else {
+                /**
+                 * When haptizer is not active it won't count inferences,
+                 * so there is no need to stop it.
+                 * TESTED ON: Maxcom MS457
+                 */
+                if (haptizerActive)
+                    if (++inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+                        (activity as MainActivity?)!!.haptizer.vibrateShot()
+            }
         }
     }
 }

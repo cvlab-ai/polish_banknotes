@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pg.eti.project.polishbanknotes.imageclassification
+package pg.eti.project.polishbanknotes
 
 import org.junit.Test
 

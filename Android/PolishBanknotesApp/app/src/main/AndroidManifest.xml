@@ -20,8 +20,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="pg.eti.project.polishbanknotes">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
@@ -31,6 +30,8 @@
 
     <!-- Declare permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- TODO manage permission in PermissionsFragment -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -56,6 +57,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Apps targeting Android 11 -->
+<!--            <queries>-->
+<!--                <intent>-->
+<!--                    <action android:name="android.intent.action.TTS_SERVICE" />-->
+<!--                </intent>-->
+<!--            </queries>-->
 
             <!-- Declare notch support -->
             <meta-data
