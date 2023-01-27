@@ -7,29 +7,70 @@
 
 import CoreML
 
-class Classifier {
+class Classifier { // IMPORTANT mlmodelc files are compieled mlmodel files
     @Published var model: MLModel?
-    @Published var error: ClassifierError?
+    @Published var error: Error?
     
     static let shared = Classifier()
-    private let defaultModelURL = Bundle.main.url(forResource: "Resnet50", withExtension: "mlmodelc")!
+    private let defaultModelURL = Bundle.main.url(forResource: "Resnet50-2", withExtension: "mlmodelc")!
+    private var currentModelURL: URL;
+    private let dispatchQueue = DispatchQueue(label: "classifier.queue", qos: .userInitiated)
     
     private init() {
-        configure()
+        currentModelURL = defaultModelURL
+        setDefaultModel()
     }
     
-    private func set(error: ClassifierError) {
+    private func setSubscription() {
+        self.$model
+            .assign(to: &$model)
+    }
+    
+    private func set(error: Error) {
         DispatchQueue.main.async {
             self.error = error
         }
     }
     
-    private func configure() {
-        model = try? MLModel.init(contentsOf: defaultModelURL)
-        if model == nil {
-            set(error: .classifierLoadFail)
+    private func set(model: MLModel) {
+        DispatchQueue.main.async {
+            self.model = model
         }
     }
+    
+    private func setDefaultModel() {
+        do {
+            model = try MLModel.init(contentsOf: defaultModelURL)
+        } catch {
+            set(error: error)
+            return
+        }
+    }
+    
+    func setModel(path: URL) {
+        dispatchQueue.async {
+            defer { path.stopAccessingSecurityScopedResource() }
+            
+            do {
+                if !path.startAccessingSecurityScopedResource() {
+                    throw ClassifierError.accessDenied // cannot access model error
+                }
+                let modelURL = try MLModel.compileModel(at: path)
+                let model = try MLModel.init(contentsOf: modelURL)
+                
+                self.set(model: model)
+                self.currentModelURL = modelURL
+            } catch {
+                self.set(error: error)
+                return
+            }
+        }
+    }
+    
+    func getModelName() -> String {
+        return currentModelURL.lastPathComponent
+    }
+    
 }
 
 class ClassifierInput: MLFeatureProvider {

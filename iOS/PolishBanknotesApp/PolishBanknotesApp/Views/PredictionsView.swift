@@ -14,7 +14,7 @@ struct PredictionsView: View {
     var body: some View {
         VStack {
             ForEach(predictions, id: \.0) { prediction in
-                Text("\(prediction.0) \((prediction.1 * 100).rounded())%")
+                Text("\(prediction.0) \(String(format: "%.0f", (prediction.1 * 100)))%")
                     .foregroundColor(.white)
                     .shadow(color: .black, radius: 1)
             }
