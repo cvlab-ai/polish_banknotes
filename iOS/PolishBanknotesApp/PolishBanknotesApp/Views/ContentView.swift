@@ -13,6 +13,16 @@ struct ContentView: View {
     
     @State private var isImporting: Bool = false
     
+    private func onCompletion(result: Result<[URL], Error>) -> Void {
+        do {
+            let selectedFile: URL = try result.get().first!
+            model.setModel(path: selectedFile)
+        } catch {
+            print("Unable to read file contents")
+            print(error.localizedDescription)
+        }
+    }
+        
     var body: some View {
         ZStack {
             FrameView(image: model.frame)
@@ -21,39 +31,12 @@ struct ContentView: View {
             
             VStack {
                 if (model.developerMode) {
-                    DeveloperView()
-                    Spacer()
-                    
-                    Group {
-                        HStack {
-                            Text("Currnet model: \(model.getModelName())")
-                            
-                            Button("Load model") { isImporting.toggle() }
-                                .fileImporter(isPresented: $isImporting,
-                                              allowedContentTypes: [.init(filenameExtension: "mlmodel")!],
-                                              allowsMultipleSelection: false) { result in
-                                    do {
-                                        let selectedFile: URL = try result.get().first!
-                                        model.setModel(path: selectedFile)
-                                    } catch {
-                                        print("Unable to read file contents")
-                                        print(error.localizedDescription)
-                                    }
-                                }
-                                              .padding(10)
-                                              .clipShape(Capsule(style: .circular))
-                                              .background(Color(red: 0.3, green: 0.3, blue: 1))
-                                              .foregroundColor(.white)
-                            
-                        }
-                        
-                        PredictionsView(predictions: model.predictions.getTopNPredictions(n: 3), developerMode: model.developerMode)
-                            .padding(.top, 10.0)
-                    }
-                    .ignoresSafeArea()
-                    .background(Color(red: 0, green: 0, blue: 0))
+                    DeveloperView(modelName: model.getModelName(),
+                                  predictions: model.predictions.getTopNPredictions(n: 3),
+                                  onCompletion: self.onCompletion)
                 } else {
                     Spacer()
+                    
                     Text(model.predictions.classLabel)
                         .accessibilityHidden(false)
                         .foregroundColor(.white)
@@ -74,7 +57,7 @@ struct ContentView: View {
         }
     }
 }
-
+    
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

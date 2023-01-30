@@ -7,7 +7,7 @@
 
 import CoreML
 
-class Classifier { // IMPORTANT mlmodelc files are compieled mlmodel files
+class Classifier {
     @Published var model: MLModel?
     @Published var error: Error?
     
