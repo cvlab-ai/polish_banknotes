@@ -6,45 +6,60 @@
 //
 
 import SwiftUI
+import CoreML
 
 struct ContentView: View {
-  @StateObject private var model = ContentViewModel()
-
-  var body: some View {
-      ZStack {
-          FrameView(image: model.frame)
-              .edgesIgnoringSafeArea(.all)
-              .accessibilityHidden(true)
-          
-          VStack {
-              if (model.developerMode) {
-                  DeveloperView()
-                  Spacer()
-                  PredictionsView(predictions: model.predictions.getTopNPredictions(n: 3), developerMode: model.developerMode)
-              } else {
-                  Spacer()
-                  Text(model.predictions.classLabel)
-                      .accessibilityHidden(false)
-                      .foregroundColor(.white)
-                      .shadow(color: .black, radius: 1)
-              }
-          }
-        
-          ErrorView(error: model.error)
-              .accessibilityLabel("")
-              .accessibilityHint("")
+    @StateObject private var model = ContentViewModel()
+    
+    @State private var isImporting: Bool = false
+    
+    private func onCompletion(result: Result<[URL], Error>) -> Void {
+        do {
+            let selectedFile: URL = try result.get().first!
+            model.setModel(path: selectedFile)
+        } catch {
+            print("Unable to read file contents")
+            print(error.localizedDescription)
+        }
     }
-      .accessibilityLabel("Predicted value.")
-      .accessibilityValue("\(model.predictions.classLabel).")
-      .accessibilityHint("Most likely banknote nominal.")
-      .onLongPressGesture(minimumDuration: 10) {
-        model.developerMode = !model.developerMode
-      }
-  }
+        
+    var body: some View {
+        ZStack {
+            FrameView(image: model.frame)
+                .edgesIgnoringSafeArea(.all)
+                .accessibilityHidden(true)
+            
+            VStack {
+                if (model.developerMode) {
+                    DeveloperView(modelName: model.getModelName(),
+                                  predictions: model.predictions.getTopNPredictions(n: 3),
+                                  onCompletion: self.onCompletion)
+                } else {
+                    Spacer()
+                    
+                    Text(model.predictions.classLabel)
+                        .accessibilityHidden(false)
+                        .foregroundColor(.white)
+                        .shadow(color: .black, radius: 1)
+                }
+            }
+            
+            ErrorView(error: model.error)
+                .accessibilityLabel("Error message.")
+                .accessibilityValue(model.error?.localizedDescription ?? "")
+                .accessibilityHint("Something went wrong.")
+        }
+        .accessibilityLabel("Predicted value.")
+        .accessibilityValue("\(model.predictions.classLabel).")
+        .accessibilityHint("Most likely banknote nominal.")
+        .onLongPressGesture(minimumDuration: 10) {
+            model.developerMode = !model.developerMode
+        }
+    }
 }
-
+    
 struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
-  }
+    static var previews: some View {
+        ContentView()
+    }
 }

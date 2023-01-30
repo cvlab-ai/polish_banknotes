@@ -15,18 +15,47 @@ class ContentViewModel: ObservableObject {
     @Published var frame: CGImage?
     @Published var predictions: ClassifierOutput = ClassifierOutput(classLabelProbs: ["": 0], classLabel: "")
     
-    var developerMode = false
+    var developerMode = true
     
     private let cameraManager = CameraManager.shared
     private let frameManager = FrameManager.shared
     private let classifier = Classifier.shared
     
+    private var framePredictionSubscription: AnyCancellable?;
+    
+    @Published private var model: MLModel?
+    
     init() {
         setupSubscriptions()
     }
     
-    func setupSubscriptions() {
+    func getModelName() -> String {
+        return classifier.getModelName()
+    }
+    
+    func setModel(path: URL) {
+        classifier.setModel(path: path)
         
+        framePredictionSubscription?.cancel()
+        
+        framePredictionSubscription = frameManager.$current
+            .compactMap { $0 } // check for nil buffers
+            .compactMap { buffer in
+                let image = CGImage.create(from: buffer)
+                return try? ClassifierInput(imageWith: image!)
+            }
+            .prediction(model: self.model!)
+            .compactMap { try? $0.get() }
+            .map {
+                let output = ClassifierOutput(features: $0)
+                return output
+            }
+            .sink { [weak self] predictions in
+                self?.predictions = predictions
+            }
+    }
+    
+    func setupSubscriptions() {
         cameraManager.$error
             .receive(on: RunLoop.main)
             .map { $0 }
@@ -39,8 +68,14 @@ class ContentViewModel: ObservableObject {
             }
             .assign(to: &$frame)
         
-        frameManager.$current
-            .compactMap { $0 } // TODO: check for nil buffers
+        classifier.$model
+            .compactMap { model in
+                return model
+            }
+            .assign(to: &$model)
+        
+        framePredictionSubscription = frameManager.$current
+            .compactMap { $0 } // check for nil buffers
             .compactMap { buffer in
                 let image = CGImage.create(from: buffer)
                 return try? ClassifierInput(imageWith: image!)
@@ -51,6 +86,8 @@ class ContentViewModel: ObservableObject {
                 let output = ClassifierOutput(features: $0)
                 return output
             }
-            .assign(to: &$predictions)
+            .sink { [weak self] predictions in
+                self?.predictions = predictions
+            }
     }
 }

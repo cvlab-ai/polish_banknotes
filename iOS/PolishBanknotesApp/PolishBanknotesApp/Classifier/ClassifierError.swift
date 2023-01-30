@@ -8,6 +8,14 @@
 import Foundation
 
 enum ClassifierError: Error {
-    case classifierLoadFail
-    // TODO: classifier error handling, error view
+    case accessDenied
+}
+
+extension ClassifierError: LocalizedError {
+    var errorDescription: String? {
+          switch self {
+          case .accessDenied:
+              return "Access denied to .mlmodel file"
+          }
+    }
 }

@@ -11,13 +11,11 @@ extension UIDeviceOrientation {
     var imageOrientation: Image.Orientation {
         switch UIDevice.current.orientation {
         case .landscapeLeft:
-          return .left
+            return .left
         case .landscapeRight:
             return .right
         case .portrait:
             return .up
-        case .portraitUpsideDown:
-            return .down
         default:
             return .up
         }
