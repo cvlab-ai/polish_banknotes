@@ -16,19 +16,30 @@
 
 package pg.eti.project.polishbanknotes
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.*
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import pg.eti.project.polishbanknotes.accesability.Haptizer
 import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import java.io.File
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var activityMainBinding: ActivityMainBinding
+    private lateinit var sensorManager: SensorManager
 
     // TODO SCOPE?
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
+
+    private var torchActive: Boolean = false
+    private var lightSensor: Sensor? = null
+    private var lx: Float? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +58,14 @@ class MainActivity : AppCompatActivity() {
         // Accessibility features initialization.
         talkBackSpeaker = TalkBackSpeaker(this)
         haptizer = Haptizer(this)
+
+        // Light sensor
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+        sensorManager.registerListener(this,
+            lightSensor,
+            SensorManager.SENSOR_DELAY_NORMAL,
+            SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onBackPressed() {
@@ -66,6 +85,38 @@ class MainActivity : AppCompatActivity() {
         // Stopping the haptizer service.
         haptizer.stop()
 
+        // Unregistering light sensor listener
+        sensorManager.unregisterListener(this)
+
         super.onDestroy()
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+        return
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(event?.sensor?.type == Sensor.TYPE_LIGHT){
+            lx = event.values[0]
+            torchActive = lx!! < 50
+
+            Log.i("MainActivity", "\n$lx$torchActive\n")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lightSensor?.also { light ->
+            sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
+    fun getTorchStatus(): Boolean{
+        return torchActive
     }
 }

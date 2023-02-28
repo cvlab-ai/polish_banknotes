@@ -48,6 +48,12 @@ import java.util.concurrent.Executors
  */
 const val INFERENCE_COUNTER_FOR_OLDER_DEVICES = 5
 
+/**
+ * Number of last results that will be considered for choosing final label
+ * (most occurrences in last NUMBER_OF_LAST_RESULTS)
+ */
+const val NUMBER_OF_LAST_RESULTS = 5
+
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
     companion object {
@@ -74,6 +80,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var haptizerActive = true
     private var wasHaptizerActive = false
     private var inferenceCounter: Int = 0
+    private var lastLabels = mutableListOf<String>()
+    private var torchStatus = false
     private lateinit var uiManager: UiManager
 
     /** Blocking camera operations are performed using this executor */
@@ -406,17 +414,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // TODO: any test, exception, else?
         // TODO: test use cases
         // TODO PERFORMANCE: is this not slow?
-            val label = results!![0].categories[0].label
+            val result = results!![0].categories[0].label
+
+            if(lastLabels.size >= NUMBER_OF_LAST_RESULTS){
+                lastLabels.removeLast()
+            }
+            lastLabels.add(0, result)
+
+            // label is the result that have the most occurrences in lastLabels list
+            val label = lastLabels.groupingBy { it }.eachCount().toList()
+                .maxByOrNull { (_, value) -> value }!!.first
 
             // Snippet to have active/inactive classification
             if (label != "None"
-                && fragmentCameraBinding.recyclerviewResults.visibility == View.GONE) {
+                && fragmentCameraBinding.recyclerviewResults.visibility == View.GONE && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Stop classifying only when in blind-user mode.
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
                 classificationActive = false
                 haptizerActive = false
-
-            } else if (label != "None" && label != lastResultLabel) {
+                lastLabels.clear()
+            } else if (label != "None" && label != lastResultLabel && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Speak on changed banknote.
                 // (dev mode + maybe in user mode because of USE-CASE #1)
                 // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
@@ -425,6 +442,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // TODO TOO DIRECT: accessing val from here; maybe create abstract class
                 //  for accessibility functionalities?
                 // TODO LEARN: how are fragments run, there is no call anywhere.
+                lastLabels.clear()
             } else if (label == "None") {
                 // Start vibrating when the label is "None".
                 haptizerActive = true
@@ -455,9 +473,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                  * TESTED ON: Maxcom MS457
                  */
                 if (haptizerActive)
-                    if (++inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+                    if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
+            if (inferenceCounter++ % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+                enableTorch()
+        }
+    }
+
+    private fun enableTorch(){
+        if (torchStatus == (activity as MainActivity?)!!.getTorchStatus())
+            return
+
+        torchStatus = (activity as MainActivity?)!!.getTorchStatus()
+
+        Log.i("CameraFragment", "\n$torchStatus\n")
+
+        if (torchStatus){
+            camera!!.cameraControl.enableTorch(true)
+        }else{
+            camera!!.cameraControl.enableTorch(false)
         }
     }
 }
