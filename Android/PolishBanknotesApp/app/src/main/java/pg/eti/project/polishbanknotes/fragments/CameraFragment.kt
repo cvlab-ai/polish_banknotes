@@ -487,8 +487,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         torchStatus = (activity as MainActivity?)!!.getTorchStatus()
 
-        Log.i("CameraFragment", "\n$torchStatus\n")
-
         if (torchStatus){
             camera!!.cameraControl.enableTorch(true)
         }else{

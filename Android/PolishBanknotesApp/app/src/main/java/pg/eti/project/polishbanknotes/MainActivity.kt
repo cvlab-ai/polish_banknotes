@@ -100,7 +100,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             lx = event.values[0]
             torchActive = lx!! < 50
 
-            Log.i("MainActivity", "\n$lx$torchActive\n")
         }
     }
 
