@@ -433,6 +433,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 classificationActive = false
                 haptizerActive = false
                 lastLabels.clear()
+
+//              I dont know if torch should be turned off after recognition
+//                torchStatus = false
             } else if (label != "None" && label != lastResultLabel && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Speak on changed banknote.
                 // (dev mode + maybe in user mode because of USE-CASE #1)
@@ -443,6 +446,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 //  for accessibility functionalities?
                 // TODO LEARN: how are fragments run, there is no call anywhere.
                 lastLabels.clear()
+
+//              I dont know if torch should be turned off after recognition
+//                torchStatus = false
             } else if (label == "None") {
                 // Start vibrating when the label is "None".
                 haptizerActive = true

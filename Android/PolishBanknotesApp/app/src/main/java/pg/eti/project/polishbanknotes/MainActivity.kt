@@ -29,6 +29,10 @@ import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import java.io.File
 
+// Value of illuminance (in lux) at which torch is turning on/off
+//TODO Perform tests and select the best value
+const val LIGHT_VALUE = 40
+
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var sensorManager: SensorManager
@@ -98,7 +102,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if(event?.sensor?.type == Sensor.TYPE_LIGHT){
             lx = event.values[0]
-            torchActive = lx!! < 50
+            torchActive = lx!! < LIGHT_VALUE
 
         }
     }
