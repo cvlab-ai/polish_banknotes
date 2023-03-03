@@ -31,7 +31,7 @@ import java.io.File
 
 // Value of illuminance (in lux) at which torch is turning on/off
 //TODO Perform tests and select the best value
-const val LIGHT_VALUE = 40
+const val LIGHT_VALUE = 30
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var activityMainBinding: ActivityMainBinding

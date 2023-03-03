@@ -80,7 +80,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var haptizerActive = true
     private var wasHaptizerActive = false
     private var inferenceCounter: Int = 0
-    private var lastLabels = mutableListOf<String>()
+    private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
     private lateinit var uiManager: UiManager
 
@@ -94,6 +94,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
+
+        torchStatus = (activity as MainActivity?)!!.getTorchStatus()
+        if(torchStatus)
+            camera!!.cameraControl.enableTorch(true)
+
     }
 
     override fun onDestroyView() {
@@ -414,7 +419,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // TODO: any test, exception, else?
         // TODO: test use cases
         // TODO PERFORMANCE: is this not slow?
-            val result = results!![0].categories[0].label
+
+            //
+            val result: String? = if(results?.isEmpty() == true || results!![0].categories.isEmpty()){
+                null
+            }else{
+                results[0].categories[0].label
+            }
 
             if(lastLabels.size >= NUMBER_OF_LAST_RESULTS){
                 lastLabels.removeLast()
@@ -422,8 +433,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             lastLabels.add(0, result)
 
             // label is the result that have the most occurrences in lastLabels list
-            val label = lastLabels.groupingBy { it }.eachCount().toList()
+            var label = lastLabels.groupingBy { it }.eachCount().toList()
                 .maxByOrNull { (_, value) -> value }!!.first
+
+            if(label == null)
+                label = "None"
 
             // Snippet to have active/inactive classification
             if (label != "None"
