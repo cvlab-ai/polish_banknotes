@@ -27,23 +27,16 @@ import androidx.appcompat.app.AppCompatActivity
 import pg.eti.project.polishbanknotes.accesability.Haptizer
 import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
+import pg.eti.project.polishbanknotes.sensors.TorchManager
 import java.io.File
 
-// Value of illuminance (in lux) at which torch is turning on/off
-//TODO Perform tests and select the best value
-const val LIGHT_VALUE = 30
-
-class MainActivity : AppCompatActivity(), SensorEventListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
-    private lateinit var sensorManager: SensorManager
 
     // TODO SCOPE?
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
-
-    private var torchActive: Boolean = false
-    private var lightSensor: Sensor? = null
-    private var lx: Float? = null
+    lateinit var torchManager: TorchManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,13 +56,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         talkBackSpeaker = TalkBackSpeaker(this)
         haptizer = Haptizer(this)
 
-        // Light sensor
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
-        sensorManager.registerListener(this,
-            lightSensor,
-            SensorManager.SENSOR_DELAY_NORMAL,
-            SensorManager.SENSOR_DELAY_NORMAL)
+        // Sensors initialization.
+        torchManager = TorchManager(this)
     }
 
     override fun onBackPressed() {
@@ -82,6 +70,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        torchManager.unregisterSensorListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        torchManager.registerSensorListener()
+    }
+
+
+
     override fun onDestroy() {
         // TextToSpeech service must be stopped before closing the app.
         talkBackSpeaker.stop()
@@ -90,36 +92,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         haptizer.stop()
 
         // Unregistering light sensor listener
-        sensorManager.unregisterListener(this)
+        torchManager.unregisterSensorListener()
 
         super.onDestroy()
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-        return
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        if(event?.sensor?.type == Sensor.TYPE_LIGHT){
-            lx = event.values[0]
-            torchActive = lx!! < LIGHT_VALUE
-
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        lightSensor?.also { light ->
-            sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sensorManager.unregisterListener(this)
-    }
-
-    fun getTorchStatus(): Boolean{
-        return torchActive
     }
 }

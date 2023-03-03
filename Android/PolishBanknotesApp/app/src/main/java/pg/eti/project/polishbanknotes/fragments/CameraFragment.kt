@@ -95,7 +95,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
 
-        torchStatus = (activity as MainActivity?)!!.getTorchStatus()
+        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
         if(torchStatus)
             camera!!.cameraControl.enableTorch(true)
 
@@ -502,10 +502,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     }
 
     private fun enableTorch(){
-        if (torchStatus == (activity as MainActivity?)!!.getTorchStatus())
+        if (torchStatus == (activity as MainActivity?)!!.torchManager.getTorchStatus())
             return
 
-        torchStatus = (activity as MainActivity?)!!.getTorchStatus()
+        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 
         if (torchStatus){
             camera!!.cameraControl.enableTorch(true)

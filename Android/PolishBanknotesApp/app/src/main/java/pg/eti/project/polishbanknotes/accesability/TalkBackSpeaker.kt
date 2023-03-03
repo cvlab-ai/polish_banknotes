@@ -5,7 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import java.util.*
 
-class TalkBackSpeaker(private val context: Context) {
+class TalkBackSpeaker(context: Context) {
     private lateinit var textToSpeech: TextToSpeech
 
     init {
