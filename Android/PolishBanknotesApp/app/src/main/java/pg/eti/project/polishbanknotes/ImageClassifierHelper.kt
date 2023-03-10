@@ -97,7 +97,7 @@ class ImageClassifierHelper(
         } else {
             modelName =
                 when (currentModel) {
-                    MODEL_MOBILENETV1 -> "mobilenetv1.tflite"
+                    MODEL_MOBILENETV1 -> "yolov5s-cls_softmax_exp.tflite"
 //                    MODEL_FLOWER_MODEL -> "FlowerModel.tflite"
                     else -> "mobilenetv1.tflite"
                 }

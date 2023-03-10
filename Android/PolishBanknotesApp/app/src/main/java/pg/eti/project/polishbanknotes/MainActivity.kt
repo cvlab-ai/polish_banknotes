@@ -16,11 +16,18 @@
 
 package pg.eti.project.polishbanknotes
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.*
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import pg.eti.project.polishbanknotes.accesability.Haptizer
 import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
+import pg.eti.project.polishbanknotes.sensors.TorchManager
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     // TODO SCOPE?
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
+    lateinit var torchManager: TorchManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         // Accessibility features initialization.
         talkBackSpeaker = TalkBackSpeaker(this)
         haptizer = Haptizer(this)
+
+        // Sensors initialization.
+        torchManager = TorchManager(this)
     }
 
     override fun onBackPressed() {
@@ -59,12 +70,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        torchManager.unregisterSensorListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        torchManager.registerSensorListener()
+    }
+
+
+
     override fun onDestroy() {
         // TextToSpeech service must be stopped before closing the app.
         talkBackSpeaker.stop()
 
         // Stopping the haptizer service.
         haptizer.stop()
+
+        // Unregistering light sensor listener
+        torchManager.unregisterSensorListener()
 
         super.onDestroy()
     }
