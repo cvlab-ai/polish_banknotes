@@ -498,8 +498,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
-            if (inferenceCounter++ % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
                 enableTorch()
+                
+            inferenceCounter++ 
         }
     }
 
