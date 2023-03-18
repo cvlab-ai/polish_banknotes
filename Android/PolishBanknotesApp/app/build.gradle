@@ -33,7 +33,8 @@ android {
     defaultConfig {
         applicationId "pg.eti.project.polishbanknotes"
         minSdk 23
-        targetSdk 31
+        // Must be the same as compileSdk
+        targetSdk 32
         versionCode 1
         versionName "0.4"
 
