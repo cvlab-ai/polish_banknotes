@@ -140,6 +140,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         fragmentCameraBinding.viewFinder.setOnClickListener {
             classificationActive = true
             haptizerActive = true
+            enableTorch()
         }
     }
 
@@ -305,6 +306,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
                 lastLabels.clear()
 
+                torchStatus = false
+                camera!!.cameraControl.enableTorch(false)
             } else if (label == "None") {
                 // Start haptizing when the label is "None".
                 haptizerActive = true
@@ -338,7 +341,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
-            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
                 enableTorch()
                 
             inferenceCounter++ 

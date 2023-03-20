@@ -154,6 +154,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         fragmentCameraBinding.viewFinder.setOnClickListener {
             classificationActive = true
             haptizerActive = true
+            enableTorch()
         }
 
         // Attach listeners to UI control widgets
@@ -443,8 +444,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 haptizerActive = false
                 lastLabels.clear()
 
-//              I dont know if torch should be turned off after recognition
-//                torchStatus = false
+                torchStatus = false
+                camera!!.cameraControl.enableTorch(false)
             } else if (label != "None" && label != lastResultLabel && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Speak on changed banknote.
                 // (dev mode + maybe in user mode because of USE-CASE #1)
@@ -456,8 +457,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // TODO LEARN: how are fragments run, there is no call anywhere.
                 lastLabels.clear()
 
-//              I dont know if torch should be turned off after recognition
-//                torchStatus = false
+
             } else if (label == "None") {
                 // Start vibrating when the label is "None".
                 haptizerActive = true
@@ -491,7 +491,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
-            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
                 enableTorch()
                 
             inferenceCounter++ 
