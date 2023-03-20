@@ -12,11 +12,10 @@ class TalkBackSpeaker(context: Context) {
         // Setting TextToSpeech (TalkBack)
         textToSpeech = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                val result = textToSpeech.setLanguage(Locale.getDefault())
+                var result = textToSpeech.setLanguage(Locale.getDefault())
                 if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED
                 ) {
-                    // TODO set english language as a backup language
                     Log.e("TTS", "Language not supported")
                 } else {
                     Log.i("TTS", "Language set: ${Locale.getDefault()}")
@@ -39,6 +38,5 @@ class TalkBackSpeaker(context: Context) {
             textToSpeech.stop()
             textToSpeech.shutdown()
         }
-        // TODO: Any return value? Catches?
     }
 }

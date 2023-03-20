@@ -285,7 +285,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     uiManager.hideBottomSheetControls()
                 }
             }
-            // TODO else exceptions here, any test?
         }
     }
 
@@ -417,12 +416,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
                 String.format("%d ms", inferenceTime)
 
-        // Say the label.
-        // TODO: any test, exception, else?
-        // TODO: test use cases
-        // TODO PERFORMANCE: is this not slow?
-
-            //
             val result: String? = if(results?.isEmpty() == true || results!![0].categories.isEmpty()){
                 null
             }else{

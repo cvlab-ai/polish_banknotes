@@ -15,13 +15,10 @@ class Haptizer(context: Context) {
 
     init {
         // Setting the haptizer.
-        // TODO DEVICE SPECS: check if the device has needed options for haptic feedback.
-        // TODO EXCEPTION: Do sth with this "ClassNullException".
         haptizer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val haptizerManager =
                 context.getSystemService(VIBRATOR_MANAGER_SERVICE) as? VibratorManager
             haptizerManager!!.defaultVibrator
-            // TODO EXCEPTION?
         } else {
             @Suppress("DEPRECATION")
             context.getSystemService(VIBRATOR_SERVICE) as Vibrator
@@ -33,7 +30,7 @@ class Haptizer(context: Context) {
      * version.
      */
     fun startSnowCone() {
-        // TODO EXCEPTION?: does it need test, or else, or exception etc.
+        // TODO API: change after testing on my MAXCOM
         haptizer.let {
             it.vibrate(VibrationEffect.createWaveform(haptizerTimings, 0))
         }
@@ -44,7 +41,6 @@ class Haptizer(context: Context) {
      * version.
      */
     fun vibrateShot() {
-        // TODO EXCEPTION?: does it need test, or else, or exception etc.
         haptizer.let {
             @Suppress("DEPRECATION")
             it.vibrate(40)
@@ -54,6 +50,5 @@ class Haptizer(context: Context) {
     // Function to stop TextToSpeech service working.
     fun stop() {
         haptizer.cancel()
-        // TODO: Any return value? Catches?
     }
 }
