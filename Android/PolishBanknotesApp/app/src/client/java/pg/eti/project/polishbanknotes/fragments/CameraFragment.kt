@@ -306,6 +306,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
                 lastLabels.clear()
 
+                // TODO enhance: close all torch management in class TorchManager
                 torchStatus = false
                 camera!!.cameraControl.enableTorch(false)
             } else if (label == "None") {
