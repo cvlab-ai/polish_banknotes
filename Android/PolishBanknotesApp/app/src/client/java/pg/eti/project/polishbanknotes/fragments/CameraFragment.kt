@@ -45,6 +45,9 @@ import java.util.concurrent.Executors
  * I want device to vibrate every 1s, so if I assume that older device is inferencing
  * ~200ms so 5 of them will give me about 1s. The accuracy is not that important.
  */
+// TODO optimalization: auto select inference counter for older devices.
+//  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
+//  pointing on banknote.
 const val INFERENCE_COUNTER_FOR_OLDER_DEVICES = 5
 
 /**
@@ -77,7 +80,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var lastResultLabel = ""
     private var classificationActive = true
     private var haptizerActive = true
-    private var wasHaptizerActive = false
     private var inferenceCounter: Int = 0
     private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
@@ -93,6 +95,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
 
+        // TODO test: if everything else works after returning to app.
         torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
         if(torchStatus)
             camera!!.cameraControl.enableTorch(true)
@@ -130,18 +133,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         fragmentCameraBinding.viewFinder.post {
-            // Set up the camera and its use cases
+            // Set up the camera and its use cases.
+            // Also turn on Torch.
             setUpCamera()
-        }
-
-        /**
-         * Turning on classification by clicking on camera.
-         * It needs to work even when it is in dev mode, because someone
-         * could turn the dev mode back on and not turn the classification.
-         */
-        fragmentCameraBinding.viewFinder.setOnClickListener {
-            classificationActive = true
-            haptizerActive = true
             enableTorch()
         }
     }
@@ -303,54 +297,23 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
 
                 // Show the label in textView.
+                // TODO: if all the time on one banknote that there is queue.
+                //  maybe do flush speaking and faster hide of label in this case.
                 fragmentCameraBinding.labelTextView.text = label
                 val resetLabelTextView = Runnable {
                     fragmentCameraBinding.labelTextView.text = ""
                 }
                 Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 3000)
 
-                // Stop classifying
-                classificationActive = false
-                haptizerActive = false
-
                 lastLabels.clear()
-
-                // TODO enhance: close all torch management in class TorchManager
-                torchStatus = false
-                camera!!.cameraControl.enableTorch(false)
-            } else if (label == "None") {
-                // Start haptizing when the label is "None".
-                haptizerActive = true
             }
+
             lastResultLabel = label
 
-            /**
-             * Run, pause haptizer service.
-             * It needs to be controlled by two variables because it will be run every inference
-             * thus it would start haptizer every time.
-             */
-            // TODO TEST ON DEVICE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                /**
-                 * Haptizer tested on: Samsung S21 5G
-                 */
-                if (haptizerActive && !wasHaptizerActive) {
-                    (activity as MainActivity?)!!.haptizer.startSnowCone()
-                    wasHaptizerActive = true
-                } else if (!haptizerActive && wasHaptizerActive) {
-                    (activity as MainActivity?)!!.haptizer.stop()
-                    wasHaptizerActive = false
-                }
-            } else {
-                /**
-                 * When haptizer is not active it won't count inferences,
-                 * so there is no need to stop it.
-                 * TESTED ON: Maxcom MS457
-                 */
-                if (haptizerActive)
-                    if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
-                        (activity as MainActivity?)!!.haptizer.vibrateShot()
-            }
+            if (haptizerActive)
+                if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
+                    (activity as MainActivity?)!!.haptizer.vibrateShot()
+
             if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
                 enableTorch()
                 
