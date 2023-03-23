@@ -301,6 +301,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+
+                // Show the label in textView.
                 fragmentCameraBinding.labelTextView.text = label
                 val resetLabelTextView = Runnable {
                     fragmentCameraBinding.labelTextView.text = ""
