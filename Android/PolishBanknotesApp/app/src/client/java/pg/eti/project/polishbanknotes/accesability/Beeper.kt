@@ -4,11 +4,9 @@ import android.content.Context
 import android.content.Context.AUDIO_SERVICE
 import android.media.AudioManager
 import android.media.ToneGenerator
-import androidx.core.content.ContextCompat.getSystemService
 
 
-class Beeper(context: Context) {
-    var context = context
+class Beeper(var context: Context) {
     private var am: AudioManager?
     private var volumeLevel: Int
     private var toneGen: ToneGenerator
@@ -20,6 +18,8 @@ class Beeper(context: Context) {
     }
 
     fun beep() {
+        volumeLevel = am?.getStreamVolume(AudioManager.STREAM_MUSIC)!!
+        toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, volumeLevel)
         toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 300)
     }
 }
