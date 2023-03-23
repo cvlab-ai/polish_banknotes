@@ -252,9 +252,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         try {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
         } catch (e: java.lang.RuntimeException) {
-            Log.e("BUFFFULL", "ROME parse error: $e")
+            Log.e("BUFF_FULL", "ROME parse error: $e")
         } catch (e2: Error) {
-            Log.e("BUFFFULL", "ROME parse error2: $e2")
+            Log.e("BUFF_FULL", "ROME parse error2: $e2")
         }
 
 
@@ -342,41 +342,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
                 enableTorch()
-//                Log.d("TORCH", "activated")
                 
             inferenceCounter++ 
         }
     }
 
-    private fun enableTorch(){
-        try {
-            if (torchStatus == (activity as MainActivity?)?.torchManager?.getTorchStatus() )
-                return
-        } catch (e: NullPointerException) {
-            Log.d("NULL", "enableTorch - torch status 1")
-        }
+    private fun enableTorch() {
+        if (torchStatus == (activity as MainActivity?)!!.torchManager.getTorchStatus())
+            return
 
+        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 
         try {
-            if (torchStatus == (activity as MainActivity?)?.torchManager?.getTorchStatus())
-                return
+            if (torchStatus) {
+                camera!!.cameraControl.enableTorch(true)
+            } else {
+                camera!!.cameraControl.enableTorch(false)
+            }
         } catch (e: NullPointerException) {
-            Log.d("NULL", "enableTorch - torch status 2")
+            Log.e("NULL_TORCH", "NPE error: $e")
         }
 
-        if (torchStatus){
-            try {
-                camera?.cameraControl?.enableTorch(true)
-            } catch (e: NullPointerException) {
-                Log.d("NULL", "enableTorch - camera control 1")
-            }
-
-        }else{
-            try {
-                camera?.cameraControl?.enableTorch(false)
-            } catch (e: NullPointerException) {
-                Log.d("NULL", "enableTorch - camera control 2")
-            }
-        }
     }
 }
