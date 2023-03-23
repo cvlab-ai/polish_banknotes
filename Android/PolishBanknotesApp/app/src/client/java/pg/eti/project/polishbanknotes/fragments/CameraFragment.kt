@@ -318,10 +318,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
                 // We want only to beep at highest denominations.
-                if(label == "200" || label == "500")
-                    beeper.beep()
-                else
-                    (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                when (label) {
+                    "200" -> beeper.beep()
+                    "500" -> beeper.doubleBeep()
+                    else -> (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                }
 
                 // Show the label in textView.
                 // TODO: if all the time on one banknote then it will say label,
@@ -344,7 +345,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 lastLabels.clear()
             }
 
-            beeper.beep()
             lastResultLabel = label
 
             if (haptizerActive)

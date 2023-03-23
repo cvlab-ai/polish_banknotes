@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Context.AUDIO_SERVICE
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.media.ToneGenerator.MAX_VOLUME
 
 
 class Beeper(var context: Context) {
@@ -14,12 +15,14 @@ class Beeper(var context: Context) {
     init {
         am = context.getSystemService(AUDIO_SERVICE) as AudioManager?
         volumeLevel = am?.getStreamVolume(AudioManager.STREAM_MUSIC)!!
-        toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, volumeLevel)
+        toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, MAX_VOLUME)
     }
 
     fun beep() {
-        volumeLevel = am?.getStreamVolume(AudioManager.STREAM_MUSIC)!!
-        toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, volumeLevel)
-        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 300)
+        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+    }
+
+    fun doubleBeep() {
+        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 350)
     }
 }
