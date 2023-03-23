@@ -17,6 +17,7 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -32,12 +33,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.accesability.Beeper
+import pg.eti.project.polishbanknotes.SettingsActivity
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -145,6 +146,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
             enableTorch()
         }
+
+        // Link settings activity to icon.
+        fragmentCameraBinding.settingsImageView.setOnClickListener {
+            val settingsIntent = Intent(requireContext(), SettingsActivity::class.java)
+            requireContext().startActivity(settingsIntent)
+        }
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -247,7 +254,15 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // Copy out RGB bits to the shared bitmap buffer
         // TODO CRASH: if the infer time is ~300 ms and pause app, bitmaps won't load and the whole
         //  app will crash...
-        image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
+
+        try {
+            image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
+        } catch (e: java.lang.RuntimeException) {
+            Log.e("BUFF_FULL", "ROME parse error: $e")
+        } catch (e2: Error) {
+            Log.e("BUFF_FULL", "ROME parse error2: $e2")
+        }
+
 
         if (classificationActive) {
             // Pass Bitmap and rotation to the image classifier helper for processing and classification
@@ -343,16 +358,21 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         }
     }
 
-    private fun enableTorch(){
+    private fun enableTorch() {
         if (torchStatus == (activity as MainActivity?)!!.torchManager.getTorchStatus())
             return
 
         torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 
-        if (torchStatus){
-            camera!!.cameraControl.enableTorch(true)
-        }else{
-            camera!!.cameraControl.enableTorch(false)
+        try {
+            if (torchStatus) {
+                camera!!.cameraControl.enableTorch(true)
+            } else {
+                camera!!.cameraControl.enableTorch(false)
+            }
+        } catch (e: NullPointerException) {
+            Log.e("NULL_TORCH", "NPE error: $e")
         }
+
     }
 }

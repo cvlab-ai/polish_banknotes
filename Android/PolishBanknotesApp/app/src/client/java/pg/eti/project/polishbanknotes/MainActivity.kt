@@ -85,8 +85,7 @@ class MainActivity : AppCompatActivity() {
         // Stopping the haptizer service.
         haptizer.stop()
 
-        // Unregistering light sensor listener
-        torchManager.unregisterSensorListener()
+
 
         super.onDestroy()
     }
