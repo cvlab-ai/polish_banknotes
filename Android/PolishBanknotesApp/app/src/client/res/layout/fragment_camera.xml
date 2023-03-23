@@ -46,10 +46,11 @@
         android:shadowDx="10.0"
         android:shadowDy="10.0"
         android:shadowRadius="10.0"
+        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <!-- TalkBack won't read this (importantForAccessibility="no"), but need to make todo -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

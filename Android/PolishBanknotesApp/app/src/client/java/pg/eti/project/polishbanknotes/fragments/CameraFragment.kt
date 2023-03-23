@@ -45,15 +45,16 @@ import java.util.concurrent.Executors
  * I want device to vibrate every 1s, so if I assume that older device is inferencing
  * ~200ms so 5 of them will give me about 1s. The accuracy is not that important.
  */
-// TODO optimalization: auto select inference counter for older devices.
-//  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
-//  pointing on banknote.
 const val INFERENCE_COUNTER_FOR_OLDER_DEVICES = 5
 
 /**
  * Number of last results that will be considered for choosing final label
  * (most occurrences in last NUMBER_OF_LAST_RESULTS)
  */
+// TODO optimization: auto select inference counter for older devices.
+//  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
+//  pointing on banknote.
+// TODO question: is it needed?
 const val NUMBER_OF_LAST_RESULTS = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -285,8 +286,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // label is the result that have the most occurrences in lastLabels list
             var label = lastLabels.groupingBy { it }.eachCount().toList()
                 .maxByOrNull { (_, value) -> value }!!.first
-
-            if(label == null)
+            // If the user changed the banknote at the end of inference
+            // and most of labels was from the one before.
+            if(label == null || label != result)
                 label = "None"
 
             if (label != "None" && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
@@ -297,13 +299,22 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
 
                 // Show the label in textView.
-                // TODO: if all the time on one banknote that there is queue.
-                //  maybe do flush speaking and faster hide of label in this case.
+                // TODO: if all the time on one banknote then it will say label,
+                //  even if we are not pointing at it.
+                // TODO: give option to turn on TalkBackSpeaker if TalkBack is not turned on.
                 fragmentCameraBinding.labelTextView.text = label
+                classificationActive = false
                 val resetLabelTextView = Runnable {
                     fragmentCameraBinding.labelTextView.text = ""
+                    // To minimize bug of pointing at another banknote
+                    // and saying the previous one.
+                    // Slightly slower working, but still good.
+                    val turnOnClassification = Runnable {
+                        classificationActive = true
+                    }
+                    Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
                 }
-                Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 3000)
+                Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)
 
                 lastLabels.clear()
             }
