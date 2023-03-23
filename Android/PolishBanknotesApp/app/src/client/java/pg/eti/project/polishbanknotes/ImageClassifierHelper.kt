@@ -35,7 +35,7 @@ import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 // TODO: Apply best settings
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
-    var numThreads: Int = 2,
+    var numThreads: Int = 1,
     var maxResults: Int = 1,
     var currentDelegate: Int = 0,
     val context: Context,
