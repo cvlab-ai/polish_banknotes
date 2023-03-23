@@ -21,6 +21,8 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
@@ -299,6 +301,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
                 (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                fragmentCameraBinding.labelTextView.text = label
+                val resetLabelTextView = Runnable {
+                    fragmentCameraBinding.labelTextView.text = ""
+                }
+                Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 3000)
 
                 // Stop classifying
                 classificationActive = false
