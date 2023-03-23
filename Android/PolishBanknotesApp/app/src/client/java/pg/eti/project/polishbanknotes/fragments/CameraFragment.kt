@@ -37,6 +37,7 @@ import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
+import pg.eti.project.polishbanknotes.accesability.Beeper
 import pg.eti.project.polishbanknotes.SettingsActivity
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
@@ -85,6 +86,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var inferenceCounter: Int = 0
     private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
+    private lateinit var beeper: Beeper
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -133,6 +135,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             )
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        beeper = Beeper(
+            context = requireContext()
+        )
 
         fragmentCameraBinding.viewFinder.post {
             // Set up the camera and its use cases.
@@ -311,7 +317,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
-                (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                // We want only to beep at highest denominations.
+                if(label == "200" || label == "500")
+                    beeper.beep()
+                else
+                    (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
 
                 // Show the label in textView.
                 // TODO: if all the time on one banknote then it will say label,
@@ -334,6 +344,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 lastLabels.clear()
             }
 
+            beeper.beep()
             lastResultLabel = label
 
             if (haptizerActive)
@@ -342,7 +353,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
                 enableTorch()
-                
+
             inferenceCounter++ 
         }
     }
