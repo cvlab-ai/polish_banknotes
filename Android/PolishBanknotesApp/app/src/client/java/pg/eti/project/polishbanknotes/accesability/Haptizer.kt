@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 
 class Haptizer(context: Context) {
@@ -29,6 +30,7 @@ class Haptizer(context: Context) {
      * Function to start cyclic vibrations with the Snow Cone (12.0: api 31) or higher android
      * version.
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     fun startSnowCone() {
         // TODO API: change after testing on my MAXCOM
         haptizer.let {

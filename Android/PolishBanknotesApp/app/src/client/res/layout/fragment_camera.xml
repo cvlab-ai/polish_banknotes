@@ -16,16 +16,41 @@
     ~ The project is based on https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
     ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
 -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/camera_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <androidx.camera.view.PreviewView
         android:id="@+id/view_finder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:scaleType="fillStart" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <TextView
+        android:id="@+id/labelTextView"
+        android:layout_width="302dp"
+        android:layout_height="283dp"
+        android:text=""
+        android:textSize="150dp"
+        android:textAlignment="center"
+        android:textColor="@color/label_text_view_color"
+        android:shadowColor="@color/label_text_view_outline_color"
+        android:shadowDx="10.0"
+        android:shadowDy="10.0"
+        android:shadowRadius="10.0"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!-- TalkBack won't read this (importantForAccessibility="no"), but need to make todo -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
