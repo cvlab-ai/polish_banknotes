@@ -102,13 +102,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         }
 
         // TODO test: if everything else works after returning to app.
-
         // TODO crash
         // NOTE (03.04.2023): these lines crashes the return from settings
 //        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 //        if(torchStatus)
 //            camera!!.cameraControl.enableTorch(true)
-
     }
 
     override fun onDestroyView() {
