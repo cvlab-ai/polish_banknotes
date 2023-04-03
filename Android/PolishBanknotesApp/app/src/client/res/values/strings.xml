@@ -40,6 +40,10 @@
     <string name="label_delegate">Delegate</string>
     <string name="label_models">ML Model</string>
 
+    <!-- PL -->
+    <string name="activity_main_menu_title">SettingsActivity</string>
+    <string name="settings_activity_menu_title">Ustawienia</string>
+
     <string-array name="delegate_spinner_titles">
         <item>CPU</item>
         <item>GPU</item>
@@ -48,7 +52,22 @@
 
     <string-array name="models_spinner_titles">
         <item>MobileNet V1</item>
-<!--        <item>Latest Model</item>-->
-<!--        <item>Flower Model</item>-->
+        <!--        <item>Latest Model</item>-->
+        <!--        <item>Flower Model</item>-->
     </string-array>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
