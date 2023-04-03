@@ -27,5 +27,17 @@
             app:destination="@id/permissions_fragment"
             app:popUpTo="@id/camera_fragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_camera_fragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="pg.eti.project.polishbanknotes.fragments.SettingsFragment"
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_camera_fragment"
+            app:destination="@id/camera_fragment" />
+    </fragment>
+
 </navigation>

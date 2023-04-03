@@ -16,19 +16,19 @@
 
 package pg.eti.project.polishbanknotes
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.*
-import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
 import pg.eti.project.polishbanknotes.accesability.Haptizer
 import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
+import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
+import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections
 import pg.eti.project.polishbanknotes.sensors.TorchManager
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
     lateinit var torchManager: TorchManager
+    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,33 @@ class MainActivity : AppCompatActivity() {
 
         // Sensors initialization.
         torchManager = TorchManager(this)
+
+        // Setting toolbar.
+        toolbar = activityMainBinding.toolbar
+        setSupportActionBar(toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.activity_main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            // Going to the settings by nav graph.
+            R.id.action_settings -> {
+                Navigation.findNavController(this, R.id.fragment_container)
+                    .navigate(CameraFragmentDirections.actionCameraFragmentToSettingsFragment())
+                true
+            }
+            R.id.action_done -> {
+                Navigation.findNavController(this, R.id.fragment_container)
+                    .navigate(SettingsFragmentDirections.actionSettingsFragmentToCameraFragment())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onBackPressed() {
@@ -76,16 +104,12 @@ class MainActivity : AppCompatActivity() {
         torchManager.registerSensorListener()
     }
 
-
-
     override fun onDestroy() {
         // TextToSpeech service must be stopped before closing the app.
         talkBackSpeaker.stop()
 
         // Stopping the haptizer service.
         haptizer.stop()
-
-
 
         super.onDestroy()
     }

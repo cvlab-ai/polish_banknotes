@@ -27,18 +27,20 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.accesability.Beeper
-import pg.eti.project.polishbanknotes.SettingsActivity
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -100,9 +102,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         }
 
         // TODO test: if everything else works after returning to app.
-        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-        if(torchStatus)
-            camera!!.cameraControl.enableTorch(true)
+
+        // TODO crash
+        // NOTE (03.04.2023): these lines crashes the return from settings
+//        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
+//        if(torchStatus)
+//            camera!!.cameraControl.enableTorch(true)
 
     }
 
@@ -145,12 +150,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // Also turn on Torch.
             setUpCamera()
             enableTorch()
-        }
-
-        // Link settings activity to icon.
-        fragmentCameraBinding.settingsImageView.setOnClickListener {
-            val settingsIntent = Intent(requireContext(), SettingsActivity::class.java)
-            requireContext().startActivity(settingsIntent)
         }
     }
 
