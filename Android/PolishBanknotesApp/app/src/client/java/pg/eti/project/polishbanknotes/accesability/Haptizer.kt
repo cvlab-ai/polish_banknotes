@@ -8,11 +8,12 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.getSystemService
+
+const val MILLIS_TO_HAPTIZE = 2000L
 
 class Haptizer(context: Context) {
     private var haptizer: Vibrator
-    private val haptizerTimings = longArrayOf(1000, 35)
+    private val haptizerTimings = longArrayOf(MILLIS_TO_HAPTIZE, 35)
 
     init {
         // Setting the haptizer.
@@ -41,12 +42,21 @@ class Haptizer(context: Context) {
     /**
      * Function purpose id to make single vibration for below Snow Cone (12.0: api 31) android
      * version.
+     *
+     * @return Number of milliseconds to start adding from.
      */
-    fun vibrateShot() {
-        haptizer.let {
-            @Suppress("DEPRECATION")
-            it.vibrate(40)
+    fun vibrateShot(inferenceMillisSum: Long): Long {
+        var millisSum = inferenceMillisSum
+        if (millisSum >= MILLIS_TO_HAPTIZE){
+            haptizer.let {
+                @Suppress("DEPRECATION")
+                it.vibrate(40)
+            }
+
+            millisSum = 0L
         }
+
+        return millisSum
     }
 
     // Function to stop TextToSpeech service working.

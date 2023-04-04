@@ -17,7 +17,6 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -27,15 +26,12 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
@@ -45,11 +41,8 @@ import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-/**
- * I want device to vibrate every 1s, so if I assume that older device is inferencing
- * ~200ms so 5 of them will give me about 1s. The accuracy is not that important.
- */
-const val INFERENCE_COUNTER_FOR_OLDER_DEVICES = 5
+// TODO remove: when torch will be refactored
+const val MILLIS_TO_HAPTIZE = 2000L
 
 /**
  * Number of last results that will be considered for choosing final label
@@ -85,7 +78,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var lastResultLabel = ""
     private var classificationActive = true
     private var haptizerActive = true
-    private var inferenceCounter: Int = 0
+    private var inferenceMillisCounter: Long = 0L
     private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
     private lateinit var beeper: Beeper
@@ -344,14 +337,17 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             lastResultLabel = label
 
-            if (haptizerActive)
-                if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0)
-                    (activity as MainActivity?)!!.haptizer.vibrateShot()
+            if (haptizerActive) {
+                if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
+                    // Check if torch is needed.
+                    enableTorch()
 
-            if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
-                enableTorch()
+                inferenceMillisCounter =
+                    (activity as MainActivity?)!!.haptizer.vibrateShot(inferenceMillisCounter)
+            }
 
-            inferenceCounter++ 
+            inferenceMillisCounter += inferenceTime
+            // Log.d("MILLIS", "$inferenceMillisCounter")
         }
     }
 
