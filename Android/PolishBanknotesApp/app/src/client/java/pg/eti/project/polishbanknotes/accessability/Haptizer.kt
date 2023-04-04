@@ -1,4 +1,4 @@
-package pg.eti.project.polishbanknotes.accesability
+package pg.eti.project.polishbanknotes.accessability
 
 import android.content.Context
 import android.content.Context.VIBRATOR_MANAGER_SERVICE

@@ -17,6 +17,7 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
+import java.lang.Exception
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -32,11 +33,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.google.android.material.appbar.AppBarLayout
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
-import pg.eti.project.polishbanknotes.accesability.Beeper
+import pg.eti.project.polishbanknotes.accessability.Beeper
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -52,6 +54,7 @@ const val MILLIS_TO_HAPTIZE = 2000L
 //  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
 //  pointing on banknote.
 // TODO question: is it needed?
+// TODO CRASH: fast switching with settings crashes because binding not ready
 const val NUMBER_OF_LAST_RESULTS = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -110,6 +113,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         cameraExecutor.shutdown()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -142,6 +151,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
             enableTorch()
         }
+        // Show settings icon when binding will be ready.
+//        val view: AppBarLayout = activity!!.findViewById(R.id.my_app_bar)
+//        view.visibility = View.VISIBLE
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases

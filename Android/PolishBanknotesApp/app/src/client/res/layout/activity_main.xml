@@ -27,6 +27,7 @@
 
     <!-- Needed to make Toolbar. The layout is appended to default by menus. -->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/my_app_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
