@@ -56,12 +56,14 @@
         <!--        <item>Flower Model</item>-->
     </string-array>
 
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
+    <!-- Preference Titles PL -->
+    <string name="sensors_header">Sensory</string>
     <string name="sync_header">Sync</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
+    <!-- Messages Preferences PL -->
+    <!-- Torch -->
+    <string name="manage_torch_title">Lampa błyskowa</string>
+    <string name="manage_torch_on">Włączona</string>
     <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->

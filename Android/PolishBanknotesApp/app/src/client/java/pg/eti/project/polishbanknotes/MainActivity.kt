@@ -16,26 +16,29 @@
 
 package pg.eti.project.polishbanknotes
 
-import android.os.*
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.Navigation
-import pg.eti.project.polishbanknotes.accesability.Haptizer
-import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
+import androidx.navigation.findNavController
+import pg.eti.project.polishbanknotes.accessability.Haptizer
+import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
 import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections
 import pg.eti.project.polishbanknotes.sensors.TorchManager
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
     // TODO SCOPE?
-    lateinit var talkBackSpeaker: TalkBackSpeaker
-    lateinit var haptizer: Haptizer
     lateinit var torchManager: TorchManager
     private lateinit var toolbar: Toolbar
 
@@ -47,16 +50,13 @@ class MainActivity : AppCompatActivity() {
         val viewMain = activityMainBinding.root
         setContentView(viewMain)
 
-        // Accessibility features initialization.
-        talkBackSpeaker = TalkBackSpeaker(this)
-        haptizer = Haptizer(this)
-
         // Sensors initialization.
         torchManager = TorchManager(this)
 
         // Setting toolbar.
         toolbar = activityMainBinding.toolbar
         setSupportActionBar(toolbar)
+//        setupActionBarWithNavController(findNavController(R.id.fragment_container))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,20 +66,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            // Going to the settings by nav graph.
-            R.id.action_settings -> {
-                Navigation.findNavController(this, R.id.fragment_container)
-                    .navigate(CameraFragmentDirections.actionCameraFragmentToSettingsFragment())
-                true
+        // Catch not loading sth.
+        try {
+            return when (item.itemId) {
+                // Going to the settings by nav graph.
+                R.id.action_settings -> {
+                    Navigation.findNavController(this, R.id.fragment_container)
+                        .navigate(CameraFragmentDirections.actionCameraFragmentToSettingsFragment())
+                    true
+                }
+                R.id.action_done -> {
+                    Navigation.findNavController(this, R.id.fragment_container)
+                        .navigate(SettingsFragmentDirections.actionSettingsFragmentToCameraFragment())
+                    // TODO: back button should go out of app not go back to settings (back stack)
+                    true
+                }
+                else -> super.onOptionsItemSelected(item)
             }
-            R.id.action_done -> {
-                Navigation.findNavController(this, R.id.fragment_container)
-                    .navigate(SettingsFragmentDirections.actionSettingsFragmentToCameraFragment())
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        } catch (e: IllegalArgumentException) {
+            Log.e("CRASH", "$e")
+            return false
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.fragment_container)
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun onBackPressed() {
@@ -87,9 +99,9 @@ class MainActivity : AppCompatActivity() {
             // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
             // (https://issuetracker.google.com/issues/139738913)
             finishAfterTransition()
-        } else {
-            super.onBackPressed()
         }
+
+        super.onBackPressed()
     }
 
     override fun onPause() {
@@ -102,15 +114,5 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         torchManager.registerSensorListener()
-    }
-
-    override fun onDestroy() {
-        // TextToSpeech service must be stopped before closing the app.
-        talkBackSpeaker.stop()
-
-        // Stopping the haptizer service.
-        haptizer.stop()
-
-        super.onDestroy()
     }
 }

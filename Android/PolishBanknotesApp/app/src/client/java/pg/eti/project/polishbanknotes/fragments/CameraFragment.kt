@@ -17,6 +17,7 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
+import java.lang.Exception
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -32,11 +33,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.google.android.material.appbar.AppBarLayout
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
-import pg.eti.project.polishbanknotes.accesability.Beeper
+import pg.eti.project.polishbanknotes.accessability.Beeper
+import pg.eti.project.polishbanknotes.accessability.Haptizer
+import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -52,6 +56,7 @@ const val MILLIS_TO_HAPTIZE = 2000L
 //  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
 //  pointing on banknote.
 // TODO question: is it needed?
+// TODO CRASH: fast switching with settings crashes because binding not ready
 const val NUMBER_OF_LAST_RESULTS = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -82,6 +87,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
     private lateinit var beeper: Beeper
+    private lateinit var haptizer: Haptizer
+    private lateinit var talkBackSpeaker: TalkBackSpeaker
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -108,6 +115,18 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         // Shut down our background executor
         cameraExecutor.shutdown()
+
+        // Stopping the haptizer service.
+        haptizer.stop()
+
+        // TextToSpeech service must be stopped before closing the app.
+        talkBackSpeaker.stop()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -142,6 +161,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
             enableTorch()
         }
+        // Show settings icon when binding will be ready.
+//        val view: AppBarLayout = activity!!.findViewById(R.id.my_app_bar)
+//        view.visibility = View.VISIBLE
+        talkBackSpeaker = TalkBackSpeaker(requireContext())
+        haptizer = Haptizer(requireContext())
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -311,7 +335,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 when (label) {
                     "200" -> beeper.beep()
                     "500" -> beeper.doubleBeep()
-                    else -> (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                    else -> talkBackSpeaker.speak(label)
                 }
 
                 // Show the label in textView.
@@ -341,13 +365,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
                     // Check if torch is needed.
                     enableTorch()
-
-                inferenceMillisCounter =
-                    (activity as MainActivity?)!!.haptizer.vibrateShot(inferenceMillisCounter)
+                    inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
             inferenceMillisCounter += inferenceTime
-            // Log.d("MILLIS", "$inferenceMillisCounter")
+             Log.d("MILLIS", "$inferenceMillisCounter")
         }
     }
 
