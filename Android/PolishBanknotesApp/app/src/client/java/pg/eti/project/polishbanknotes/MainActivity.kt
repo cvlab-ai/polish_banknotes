@@ -16,14 +16,15 @@
 
 package pg.eti.project.polishbanknotes
 
+import android.os.*
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.os.Build
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
+import pg.eti.project.polishbanknotes.accesability.Haptizer
+import pg.eti.project.polishbanknotes.accesability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
 import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
     // TODO SCOPE?
+    lateinit var talkBackSpeaker: TalkBackSpeaker
+    lateinit var haptizer: Haptizer
     lateinit var torchManager: TorchManager
     private lateinit var toolbar: Toolbar
 
@@ -43,6 +46,10 @@ class MainActivity : AppCompatActivity() {
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         val viewMain = activityMainBinding.root
         setContentView(viewMain)
+
+        // Accessibility features initialization.
+        talkBackSpeaker = TalkBackSpeaker(this)
+        haptizer = Haptizer(this)
 
         // Sensors initialization.
         torchManager = TorchManager(this)
@@ -95,5 +102,15 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         torchManager.registerSensorListener()
+    }
+
+    override fun onDestroy() {
+        // TextToSpeech service must be stopped before closing the app.
+        talkBackSpeaker.stop()
+
+        // Stopping the haptizer service.
+        haptizer.stop()
+
+        super.onDestroy()
     }
 }
