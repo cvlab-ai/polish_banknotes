@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
     // TODO SCOPE?
-    lateinit var talkBackSpeaker: TalkBackSpeaker
-    lateinit var haptizer: Haptizer
     lateinit var torchManager: TorchManager
     private lateinit var toolbar: Toolbar
 
@@ -51,10 +49,6 @@ class MainActivity : AppCompatActivity() {
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         val viewMain = activityMainBinding.root
         setContentView(viewMain)
-
-        // Accessibility features initialization.
-        talkBackSpeaker = TalkBackSpeaker(this)
-        haptizer = Haptizer(this)
 
         // Sensors initialization.
         torchManager = TorchManager(this)
@@ -120,15 +114,5 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         torchManager.registerSensorListener()
-    }
-
-    override fun onDestroy() {
-        // TextToSpeech service must be stopped before closing the app.
-        talkBackSpeaker.stop()
-
-        // Stopping the haptizer service.
-        haptizer.stop()
-
-        super.onDestroy()
     }
 }
