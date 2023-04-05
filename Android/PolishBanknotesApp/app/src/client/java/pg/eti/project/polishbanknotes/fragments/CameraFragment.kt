@@ -36,7 +36,9 @@ import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
 import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
-import pg.eti.project.polishbanknotes.accesability.Beeper
+import pg.eti.project.polishbanknotes.accessability.Beeper
+import pg.eti.project.polishbanknotes.accessability.Haptizer
+import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -82,6 +84,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var lastLabels = mutableListOf<String?>()
     private var torchStatus = false
     private lateinit var beeper: Beeper
+    private lateinit var haptizer: Haptizer
+    private lateinit var talkBackSpeaker: TalkBackSpeaker
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -108,6 +112,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         // Shut down our background executor
         cameraExecutor.shutdown()
+
+        // Stopping the haptizer service.
+        haptizer.stop()
+
+        // TextToSpeech service must be stopped before closing the app.
+        talkBackSpeaker.stop()
     }
 
     override fun onCreateView(
@@ -142,6 +152,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
             enableTorch()
         }
+        // Show settings icon when binding will be ready.
+//        val view: AppBarLayout = activity!!.findViewById(R.id.my_app_bar)
+//        view.visibility = View.VISIBLE
+
+        talkBackSpeaker = TalkBackSpeaker(requireContext())
+        haptizer = Haptizer(requireContext())
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -311,7 +327,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 when (label) {
                     "200" -> beeper.beep()
                     "500" -> beeper.doubleBeep()
-                    else -> (activity as MainActivity?)!!.talkBackSpeaker.speak(label)
+                    else -> talkBackSpeaker.speak(label)
                 }
 
                 // Show the label in textView.
@@ -342,12 +358,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     // Check if torch is needed.
                     enableTorch()
 
-                inferenceMillisCounter =
-                    (activity as MainActivity?)!!.haptizer.vibrateShot(inferenceMillisCounter)
+                    inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
             inferenceMillisCounter += inferenceTime
-            // Log.d("MILLIS", "$inferenceMillisCounter")
+             Log.d("MILLIS", "$inferenceMillisCounter")
         }
     }
 
