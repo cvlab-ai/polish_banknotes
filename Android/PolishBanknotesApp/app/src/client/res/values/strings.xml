@@ -56,15 +56,24 @@
         <!--        <item>Flower Model</item>-->
     </string-array>
 
-    <!-- Preference Titles PL -->
+    <!-- Preference Headers PL -->
     <string name="sensors_header">Sensory</string>
-    <string name="sync_header">Sync</string>
+    <string name="label_header">Informacje ekranowe</string>
 
     <!-- Messages Preferences PL -->
     <!-- Torch -->
     <string name="manage_torch_title">Lampa błyskowa</string>
     <string name="manage_torch_on">Włączona</string>
-    <string name="reply_title">Default reply action</string>
+
+    <!-- Label -->
+    <string name="label_key">label_on_off</string>
+    <string name="label_title">Etykieta</string>
+    <string name="label_summary_on">Włączona</string>
+    <string name="label_summary_off">Wyłączona </string>
+    <string name="label_size_title">Wielkość etykiety</string>
+    <string name="label_outline_color_title">Kolor obramowania etykiety</string>
+    <string name="label_outline_size_title">Szerokość obramowania etykiety</string>
+    <string name="label_stroke_color_title">Wewnętrzny kolor etykiety</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>

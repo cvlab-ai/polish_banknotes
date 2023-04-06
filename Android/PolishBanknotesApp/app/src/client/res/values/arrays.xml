@@ -1,5 +1,6 @@
 <resources>
     <!-- Reply Preference PL -->
+    <!-- Torch -->
     <string-array name="manage_torch_entries">
         <item>Włączona</item>
         <item>Wyłączona</item>
@@ -8,5 +9,18 @@
     <string-array name="manage_torch_values">
         <item>on</item>
         <item>off</item>
+    </string-array>
+
+    <!-- Label -->
+    <string-array name="label_size_entries">
+        <item>Mała</item>
+        <item>Normalna</item>
+        <item>Duża</item>
+    </string-array>
+
+    <string-array name="label_size_values">
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
     </string-array>
 </resources>

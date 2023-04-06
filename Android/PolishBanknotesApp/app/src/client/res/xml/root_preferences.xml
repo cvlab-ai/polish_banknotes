@@ -1,31 +1,67 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/sensors_header"
-        app:icon="@drawable/ic_baseline_sensors_24">
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_sensors_24"
+        app:title="@string/sensors_header">
 
         <ListPreference
+            app:defaultValue="on"
+            app:entries="@array/manage_torch_entries"
+            app:entryValues="@array/manage_torch_values"
             app:key="manage_torch"
             app:title="@string/manage_torch_title"
-            app:entries="@array/manage_torch_entries"
-            app:defaultValue="on"
-            app:entryValues="@array/manage_torch_values"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_font_download_24"
+        app:title="@string/label_header">
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+            app:defaultValue="true"
+            app:key="@string/label_key"
+            app:summaryOff="@string/label_summary_off"
+            app:summaryOn="@string/label_summary_on"
+            app:title="@string/label_title" />
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <ListPreference
+            app:defaultValue="150F"
+            app:dependency="label_on_off"
+            app:entries="@array/label_size_entries"
+            app:entryValues="@array/label_size_values"
+            app:key="label_size"
+            app:title="@string/label_size_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+            android:defaultValue="@color/label_text_view_outline_color"
+            android:key="label_outline_color"
+            android:title="@string/label_outline_color_title"
+            app:dependency="label_on_off" />
+
+        <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+            android:defaultValue="@color/label_text_view_color"
+            android:key="label_stroke_color"
+            android:title="@string/label_stroke_color_title"
+            app:dependency="label_on_off" />
+
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:key="label_outline_size"
+            android:max="60"
+            android:title="@string/label_outline_size_title"
+            app:dependency="label_on_off" />
+
+        <!--        <SwitchPreferenceCompat-->
+        <!--            app:dependency="sync"-->
+        <!--            app:key="attachment"-->
+        <!--            app:summaryOff="@string/attachment_summary_off"-->
+        <!--            app:summaryOn="@string/attachment_summary_on"-->
+        <!--            app:title="@string/attachment_title" />-->
 
     </PreferenceCategory>
 </PreferenceScreen>
+

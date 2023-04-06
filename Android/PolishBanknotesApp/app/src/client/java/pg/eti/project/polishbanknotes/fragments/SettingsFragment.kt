@@ -3,13 +3,15 @@ package pg.eti.project.polishbanknotes.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import androidx.navigation.Navigation
-import androidx.preference.ListPreference
+import android.widget.TextView
+import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.findFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import pg.eti.project.polishbanknotes.R
+
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -23,6 +25,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         loadSettings()
+//        Log.d("PRESENT", "inicjalizacja")
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -40,8 +43,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun loadSettings() {
+        // Prepare to read from SharedPreferences
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
-        val manageTorch = sp.getString("manage_torch", "")
-        Log.d("SETTINGS", "TORCH: $manageTorch")
+
+        // Read label status and set switch.
+        var keyString: String = getString(R.string.label_key)
+        var isLabelActive = sp.getBoolean(keyString, true)
+        var spcLabelOnOff = findPreference<SwitchPreferenceCompat>(keyString)
+        spcLabelOnOff!!.isChecked = isLabelActive
+        Log.d("SETTINGS", "isLabelActive: $isLabelActive")
     }
 }

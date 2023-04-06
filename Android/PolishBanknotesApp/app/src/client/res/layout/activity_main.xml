@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -64,7 +64,8 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
             tools:context="pg.eti.project.polishbanknotes.MainActivity"
-            tools:layout="@layout/activity_main" />
+            tools:layout="@layout/activity_main"
+            android:paddingTop="?attr/actionBarSize"/>
         <!--            android:layout_marginTop="?android:attr/actionBarSize"-->
 
 
