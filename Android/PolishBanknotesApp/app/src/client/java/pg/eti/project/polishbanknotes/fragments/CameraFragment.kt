@@ -369,8 +369,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // TODO: give option to turn on TalkBackSpeaker if TalkBack is not turned on.
 
                 if (labelManager.getIsActive()) {
-// skończyłem tutaj, teraz muszę przetestować czy label się wyświetla z talkbackiem czy nie, a
-                    // potem ustawienia itd
                     fragmentCameraBinding.labelTextView.text = label
                     classificationActive = false
                     val resetLabelTextView = Runnable {
