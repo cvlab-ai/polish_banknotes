@@ -17,6 +17,9 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import java.lang.Exception
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -42,6 +45,7 @@ import pg.eti.project.polishbanknotes.accessability.Beeper
 import pg.eti.project.polishbanknotes.accessability.Haptizer
 import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
+import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -89,6 +93,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private lateinit var beeper: Beeper
     private lateinit var haptizer: Haptizer
     private lateinit var talkBackSpeaker: TalkBackSpeaker
+    private lateinit var labelManager: LabelManager
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -107,6 +114,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 //        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 //        if(torchStatus)
 //            camera!!.cameraControl.enableTorch(true)
+
+
+        checkSettingsManagement()
     }
 
     override fun onDestroyView() {
@@ -161,11 +171,26 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             setUpCamera()
             enableTorch()
         }
-        // Show settings icon when binding will be ready.
-//        val view: AppBarLayout = activity!!.findViewById(R.id.my_app_bar)
-//        view.visibility = View.VISIBLE
+
+        // Initialize services.
         talkBackSpeaker = TalkBackSpeaker(requireContext())
         haptizer = Haptizer(requireContext())
+
+        // Init SharedPreferences.
+        sharedPreferences = requireContext().getSharedPreferences(
+            "pg.eti.project.polishbanknotes",
+            MODE_PRIVATE
+            )
+        sharedPreferencesEditor = sharedPreferences.edit()
+
+        // Init settings management.
+        labelManager = LabelManager()
+        checkSettingsManagement()
+    }
+
+    private fun checkSettingsManagement(){
+        labelManager.checkIfEnable(requireContext())
+        labelManager.updateAppearance(requireContext(), fragmentCameraBinding)
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -342,19 +367,22 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // TODO: if all the time on one banknote then it will say label,
                 //  even if we are not pointing at it.
                 // TODO: give option to turn on TalkBackSpeaker if TalkBack is not turned on.
-                fragmentCameraBinding.labelTextView.text = label
-                classificationActive = false
-                val resetLabelTextView = Runnable {
-                    fragmentCameraBinding.labelTextView.text = ""
-                    // To minimize bug of pointing at another banknote
-                    // and saying the previous one.
-                    // Slightly slower working, but still good.
-                    val turnOnClassification = Runnable {
-                        classificationActive = true
+
+                if (labelManager.getIsActive()) {
+                    fragmentCameraBinding.labelTextView.text = label
+                    classificationActive = false
+                    val resetLabelTextView = Runnable {
+                        fragmentCameraBinding.labelTextView.text = ""
+                        // To minimize bug of pointing at another banknote
+                        // and saying the previous one.
+                        // Slightly slower working, but still good.
+                        val turnOnClassification = Runnable {
+                            classificationActive = true
+                        }
+                        Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
                     }
-                    Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
+                    Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)
                 }
-                Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)
 
                 lastLabels.clear()
             }

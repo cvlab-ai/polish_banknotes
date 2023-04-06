@@ -22,7 +22,7 @@
     <!-- TF Branding Orange -->
     <color name="bounding_box_color">#FF6F00</color>
     <color name="label_text_view_color">@android:color/white</color>
-    <color name="label_text_view_outline_color">@android:color/holo_green_dark</color>
+    <color name="label_text_view_outline_color">@android:color/black</color>
     <color name="toolbar_background">#EEEEEE</color>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="bottom_sheet_background">#EEEEEE</color>
