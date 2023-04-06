@@ -2,8 +2,11 @@ package pg.eti.project.polishbanknotes.settings_management
 
 import android.content.Context
 import android.content.Context.ACCESSIBILITY_SERVICE
+import android.graphics.Color
 import android.util.Log
+import android.view.View.LAYER_TYPE_SOFTWARE
 import android.view.accessibility.AccessibilityManager
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import pg.eti.project.polishbanknotes.R
@@ -68,5 +71,29 @@ class LabelManager {
             else -> fcb.labelTextView.textSize = NORMAL_LABEL_SIZE
         }
 
+
+        // Label outline color and size.
+        val labelOutlineColorInt = sharedPreferences.getInt(
+                "label_outline_color",
+                Color.parseColor("#FFFFFFFF")
+            )
+        val labelOutlineColorString = Integer.toHexString(labelOutlineColorInt)
+
+        val labelOutlineSize = sharedPreferences.getInt("label_outline_size", 10).toFloat()
+
+        val shadowColor = Color.parseColor("#$labelOutlineColorString")
+        val shadowRadius = labelOutlineSize
+        val shadowDx = labelOutlineSize
+        val shadowDy = labelOutlineSize
+
+        // Set the shadow layer using setLayerType() method
+        // Enable software layer for TextView
+        fcb.labelTextView.setLayerType(LAYER_TYPE_SOFTWARE, null)
+        fcb.labelTextView.setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
+
+
+        // Set the text color
+        val labelTextColorInt = sharedPreferences.getInt("label_stroke_color", 0)
+        fcb.labelTextView.setTextColor(labelTextColorInt)
     }
 }
