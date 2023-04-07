@@ -90,7 +90,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var haptizerActive = true
     private var inferenceMillisCounter: Long = 0L
     private var lastLabels = mutableListOf<String?>()
-    private var torchStatus = false
     private lateinit var beeper: Beeper
     private lateinit var haptizer: Haptizer
     private lateinit var talkBackSpeaker: TalkBackSpeaker
@@ -113,6 +112,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // TODO test: if everything else works after returning to app.
         // TODO crash
         // NOTE (03.04.2023): these lines crashes the return from settings
+        // NOTE (07.04.2023): these lines are not needed when there is no light sensor
 //        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
 //        if(torchStatus)
 //            camera!!.cameraControl.enableTorch(true)
@@ -177,7 +177,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         // Initialize services.
         talkBackSpeaker = TalkBackSpeaker(requireContext())
         haptizer = Haptizer(requireContext())
-        torchManager = TorchManager(requireContext())
+        torchManager = TorchManager()
 
         // Init SharedPreferences.
         sharedPreferences = requireContext().getSharedPreferences(
@@ -395,7 +395,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             if (haptizerActive) {
                 if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
                     // Check if torch is needed.
-                    torchManager.enableTorch(camera)
+                    torchManager.calculateBrightness(bitmapBuffer, camera)
                     inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
