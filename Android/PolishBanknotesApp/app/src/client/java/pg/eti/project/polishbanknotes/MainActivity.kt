@@ -32,14 +32,13 @@ import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
 import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections
-import pg.eti.project.polishbanknotes.sensors.TorchManager
+
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
     // TODO SCOPE?
-    lateinit var torchManager: TorchManager
     private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         val viewMain = activityMainBinding.root
         setContentView(viewMain)
 
-        // Sensors initialization.
-        torchManager = TorchManager(this)
 
         // Setting toolbar.
         toolbar = activityMainBinding.toolbar
@@ -102,17 +99,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         super.onBackPressed()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        torchManager.unregisterSensorListener()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        torchManager.registerSensorListener()
     }
 }

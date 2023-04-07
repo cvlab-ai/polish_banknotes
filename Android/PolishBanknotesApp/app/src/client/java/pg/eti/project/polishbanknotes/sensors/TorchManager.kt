@@ -1,54 +1,41 @@
 package pg.eti.project.polishbanknotes.sensors
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
+import android.graphics.Bitmap
+import androidx.camera.core.Camera
+import androidx.core.graphics.get
+import androidx.core.graphics.luminance
 
-// Value of illuminance (in lux) at which torch is turning on/off
-// TODO Perform tests and select the best value
-const val LIGHT_VALUE = 190
 
-class TorchManager(context: Context) : SensorEventListener {
-    private var sensorManager: SensorManager
-    private var torchActive: Boolean = false
-    private var lightSensor: Sensor? = null
-    private var lx: Float? = null
+class TorchManager() {
 
-    init {
-        // Light sensor
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
-        sensorManager.registerListener(this,
-            lightSensor,
-            SensorManager.SENSOR_DELAY_NORMAL,
-            SensorManager.SENSOR_DELAY_NORMAL)
+    companion object {
+        private const val LUMINANCE_THRESHOLD = 0.3  // Relative luminance has values in range 0.0 (pure black) - 1.0 (pure white)
     }
 
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-        return
+    fun disableTorch(camera: Camera?){
+        camera?.cameraControl?.enableTorch(false)
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        if(event?.sensor?.type == Sensor.TYPE_LIGHT){
-            lx = event.values[0]
-            torchActive = lx!! < LIGHT_VALUE
+    fun enableTorch(camera: Camera?){
+        camera?.cameraControl?.enableTorch(true)
+    }
 
+    fun calculateBrightness(image: Bitmap, camera: Camera?){
+        var brightness = 0.0
+        for(h in 0 until image.height){
+            for(w in 0 until image.width){
+                brightness += image[w, h].luminance
+            }
+        }
+
+        val imageBrightness = brightness / (image.width * image.height)
+
+        if(imageBrightness < LUMINANCE_THRESHOLD){
+            enableTorch(camera)
+        }else{
+            disableTorch(camera)
         }
     }
 
-    fun registerSensorListener() {
-        lightSensor?.also { light ->
-            sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL)
-        }
-    }
 
-    fun unregisterSensorListener() {
-        sensorManager.unregisterListener(this)
-    }
-
-    fun getTorchStatus(): Boolean{
-        return torchActive
-    }
 }
