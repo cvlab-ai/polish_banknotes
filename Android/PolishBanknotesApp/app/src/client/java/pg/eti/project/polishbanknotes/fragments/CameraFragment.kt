@@ -45,6 +45,7 @@ import pg.eti.project.polishbanknotes.accessability.Beeper
 import pg.eti.project.polishbanknotes.accessability.Haptizer
 import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
+import pg.eti.project.polishbanknotes.sensors.TorchManager
 import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -94,6 +95,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private lateinit var haptizer: Haptizer
     private lateinit var talkBackSpeaker: TalkBackSpeaker
     private lateinit var labelManager: LabelManager
+    private lateinit var torchManager: TorchManager
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -169,12 +171,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // Set up the camera and its use cases.
             // Also turn on Torch.
             setUpCamera()
-            enableTorch()
+            torchManager.enableTorch(camera)
         }
 
         // Initialize services.
         talkBackSpeaker = TalkBackSpeaker(requireContext())
         haptizer = Haptizer(requireContext())
+        torchManager = TorchManager(requireContext())
 
         // Init SharedPreferences.
         sharedPreferences = requireContext().getSharedPreferences(
@@ -392,7 +395,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             if (haptizerActive) {
                 if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
                     // Check if torch is needed.
-                    enableTorch()
+                    torchManager.enableTorch(camera)
                     inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
@@ -401,21 +404,4 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         }
     }
 
-    private fun enableTorch() {
-        if (torchStatus == (activity as MainActivity?)!!.torchManager.getTorchStatus())
-            return
-
-        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-
-        try {
-            if (torchStatus) {
-                camera!!.cameraControl.enableTorch(true)
-            } else {
-                camera!!.cameraControl.enableTorch(false)
-            }
-        } catch (e: NullPointerException) {
-            Log.e("NULL_TORCH", "NPE error: $e")
-        }
-
-    }
 }
