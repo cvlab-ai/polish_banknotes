@@ -95,7 +95,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
-       torchManager.enableTorchBasedOnSensor()
+       torchManager.enableTorch(camera)
     }
 
     override fun onDestroyView() {
@@ -151,7 +151,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         fragmentCameraBinding.viewFinder.setOnClickListener {
             classificationActive = true
             haptizerActive = true
-            torchManager.enableTorchBasedOnSensor()
+            torchManager.enableTorch(camera)
         }
 
         // Attach listeners to UI control widgets
@@ -361,7 +361,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         } catch (exc: Exception) {
             Log.e(TAG, "Use case binding failed", exc)
         }
-        torchManager.setCamera(camera!!)
     }
 
     private fun getScreenOrientation() : Int {
@@ -441,7 +440,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 haptizerActive = false
                 lastLabels.clear()
 
-                torchManager.disableTorch()
+                torchManager.disableTorch(camera)
             } else if (label != "None" && label != lastResultLabel && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Speak on changed banknote.
                 // (dev mode + maybe in user mode because of USE-CASE #1)
@@ -488,7 +487,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
             if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
-                torchManager.enableTorchBasedOnSensor()
+                torchManager.enableTorch(camera)
                 
             inferenceCounter++ 
         }
