@@ -39,6 +39,7 @@ import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.UiManager
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
+import pg.eti.project.polishbanknotes.sensors.TorchManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -81,8 +82,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var wasHaptizerActive = false
     private var inferenceCounter: Int = 0
     private var lastLabels = mutableListOf<String?>()
-    private var torchStatus = false
     private lateinit var uiManager: UiManager
+    private lateinit var torchManager: TorchManager
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -94,11 +95,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
-
-        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-        if(torchStatus)
-            camera!!.cameraControl.enableTorch(true)
-
+       torchManager.enableTorchBasedOnSensor()
     }
 
     override fun onDestroyView() {
@@ -140,12 +137,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+        torchManager = TorchManager(requireContext())
 
         fragmentCameraBinding.viewFinder.post {
             // Set up the camera and its use cases
             setUpCamera()
         }
-
         /**
          * Turning on classification by clicking on camera.
          * It needs to work even when it is in dev mode, because someone
@@ -154,7 +151,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         fragmentCameraBinding.viewFinder.setOnClickListener {
             classificationActive = true
             haptizerActive = true
-            enableTorch()
+            torchManager.enableTorchBasedOnSensor()
         }
 
         // Attach listeners to UI control widgets
@@ -359,12 +356,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
-
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
         } catch (exc: Exception) {
             Log.e(TAG, "Use case binding failed", exc)
         }
+        torchManager.setCamera(camera!!)
     }
 
     private fun getScreenOrientation() : Int {
@@ -444,8 +441,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 haptizerActive = false
                 lastLabels.clear()
 
-                torchStatus = false
-                camera!!.cameraControl.enableTorch(false)
+                torchManager.disableTorch()
             } else if (label != "None" && label != lastResultLabel && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
                 // Speak on changed banknote.
                 // (dev mode + maybe in user mode because of USE-CASE #1)
@@ -492,22 +488,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                         (activity as MainActivity?)!!.haptizer.vibrateShot()
             }
             if (inferenceCounter % INFERENCE_COUNTER_FOR_OLDER_DEVICES == 0 && haptizerActive)
-                enableTorch()
+                torchManager.enableTorchBasedOnSensor()
                 
             inferenceCounter++ 
-        }
-    }
-
-    private fun enableTorch(){
-        if (torchStatus == (activity as MainActivity?)!!.torchManager.getTorchStatus())
-            return
-
-        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-
-        if (torchStatus){
-            camera!!.cameraControl.enableTorch(true)
-        }else{
-            camera!!.cameraControl.enableTorch(false)
         }
     }
 }

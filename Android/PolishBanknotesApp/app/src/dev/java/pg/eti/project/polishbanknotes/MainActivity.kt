@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     // TODO SCOPE?
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
-    lateinit var torchManager: TorchManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +56,6 @@ class MainActivity : AppCompatActivity() {
         haptizer = Haptizer(this)
 
         // Sensors initialization.
-        torchManager = TorchManager(this)
     }
 
     override fun onBackPressed() {
@@ -73,13 +71,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        torchManager.unregisterSensorListener()
     }
 
     override fun onResume() {
         super.onResume()
 
-        torchManager.registerSensorListener()
     }
 
 
@@ -92,7 +88,6 @@ class MainActivity : AppCompatActivity() {
         haptizer.stop()
 
         // Unregistering light sensor listener
-        torchManager.unregisterSensorListener()
 
         super.onDestroy()
     }
