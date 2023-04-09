@@ -61,7 +61,6 @@ const val MILLIS_TO_HAPTIZE = 2000L
 //  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
 //  pointing on banknote.
 // TODO question: is it needed?
-// TODO CRASH: fast switching with settings crashes because binding not ready
 const val NUMBER_OF_LAST_RESULTS = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -124,7 +123,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
-        
+
         checkSettingsManagement()
     }
 
@@ -316,8 +315,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
     private fun classifyImage(image: ImageProxy) {
         // Copy out RGB bits to the shared bitmap buffer
-        // TODO CRASH: if the infer time is ~300 ms and pause app, bitmaps won't load and the whole
-        //  app will crash...
 
         try {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
@@ -353,10 +350,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             classificationResultsAdapter.updateResults(results)
             classificationResultsAdapter.notifyDataSetChanged()
 
-            // TODO: any test, exception, else?
-            // TODO: test use cases
-            // TODO PERFORMANCE: is this not slow?
-
             val result: String? = if(results?.isEmpty() == true || results!![0].categories.isEmpty()){
                 null
             }else{
@@ -377,7 +370,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 label = "None"
 
             if (label != "None" && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
-                // TODO TOO DIRECT: accessing val from here; maybe create abstract class
                 // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
@@ -419,7 +411,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
                     // Check if torch is needed.
                     torchManager.calculateBrightness(bitmapBuffer, camera)
-                    inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
+
+                inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
             inferenceMillisCounter += inferenceTime
