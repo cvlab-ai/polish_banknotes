@@ -50,9 +50,6 @@ import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-// TODO remove: when torch will be refactored
-const val MILLIS_TO_HAPTIZE = 2000L
-
 /**
  * Number of last results that will be considered for choosing final label
  * (most occurrences in last NUMBER_OF_LAST_RESULTS)
@@ -408,10 +405,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             lastResultLabel = label
 
             if (haptizerActive) {
-                if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
-                    // Check if torch is needed.
-                    torchManager.calculateBrightness(bitmapBuffer, camera)
-
+                torchManager.calculateBrightness(bitmapBuffer, camera, inferenceMillisCounter)
                 inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
