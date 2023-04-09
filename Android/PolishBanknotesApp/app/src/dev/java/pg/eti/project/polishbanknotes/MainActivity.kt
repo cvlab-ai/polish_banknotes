@@ -33,7 +33,6 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
-    // TODO SCOPE?
     lateinit var talkBackSpeaker: TalkBackSpeaker
     lateinit var haptizer: Haptizer
 

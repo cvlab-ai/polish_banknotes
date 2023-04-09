@@ -16,8 +16,16 @@ class TalkBackSpeaker(context: Context) {
                 if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED
                 ) {
-                    // TODO set english language as a backup language
-                    Log.e("TTS", "Language not supported")
+                    // Set English language as a backup language
+                    val englishLocale = Locale.ENGLISH
+                    val englishResult = textToSpeech.setLanguage(englishLocale)
+                    if (englishResult == TextToSpeech.LANG_MISSING_DATA
+                        || englishResult == TextToSpeech.LANG_NOT_SUPPORTED
+                    ) {
+                        Log.e("TTS", "Language not supported")
+                    } else {
+                        Log.i("TTS", "Language set: $englishLocale (backup)")
+                    }
                 } else {
                     Log.i("TTS", "Language set: ${Locale.getDefault()}")
                 }
