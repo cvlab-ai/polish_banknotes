@@ -50,9 +50,6 @@ import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-// TODO remove: when torch will be refactored
-const val MILLIS_TO_HAPTIZE = 2000L
-
 /**
  * Number of last results that will be considered for choosing final label
  * (most occurrences in last NUMBER_OF_LAST_RESULTS)
@@ -61,7 +58,6 @@ const val MILLIS_TO_HAPTIZE = 2000L
 //  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
 //  pointing on banknote.
 // TODO question: is it needed?
-// TODO CRASH: fast switching with settings crashes because binding not ready
 const val NUMBER_OF_LAST_RESULTS = 5
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -71,8 +67,21 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     }
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
-    private val fragmentCameraBinding
-        get() = _fragmentCameraBinding!!
+    private val fragmentCameraBinding: FragmentCameraBinding
+        get() {
+            // If binding is not set up yet, wait for it
+            return try {
+                _fragmentCameraBinding!!
+            } catch (e: NullPointerException) {
+                Log.e("CRASH", "NPE: fragmentCameraBinding")
+                _fragmentCameraBinding = FragmentCameraBinding.inflate(
+                    mainInflater,
+                    mainContainer,
+                    false
+                )
+                _fragmentCameraBinding!!
+            }
+        }
 
     private lateinit var imageClassifierHelper: ImageClassifierHelper
     private lateinit var bitmapBuffer: Bitmap
@@ -84,8 +93,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
+    private var lastResultLabel: String = ""
     private var cameraProvider: ProcessCameraProvider? = null
-    private var lastResultLabel = ""
     private var classificationActive = true
     private var haptizerActive = true
     private var inferenceMillisCounter: Long = 0L
@@ -97,6 +106,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private lateinit var torchManager: TorchManager
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var mainInflater: LayoutInflater
+    private lateinit var mainContainer: ViewGroup
+//    private lateinit var mainMenu: Menu
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -108,15 +120,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
-
-        // TODO test: if everything else works after returning to app.
-        // TODO crash
-        // NOTE (03.04.2023): these lines crashes the return from settings
-        // NOTE (07.04.2023): these lines are not needed when there is no light sensor
-//        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-//        if(torchStatus)
-//            camera!!.cameraControl.enableTorch(true)
-
 
         checkSettingsManagement()
     }
@@ -141,6 +144,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         setHasOptionsMenu(true)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu){
+        super.onPrepareOptionsMenu(menu)
+        val item = menu.findItem(R.id.action_settings)
+        item.isVisible = true
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -148,13 +157,14 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     ): View {
         _fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false)
 
+        mainInflater = inflater
+        mainContainer = container!!
         return fragmentCameraBinding.root
     }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         imageClassifierHelper =
             ImageClassifierHelper(
                 context = requireContext(),
@@ -163,9 +173,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        beeper = Beeper(
-            context = requireContext()
-        )
+        try {
+            beeper = Beeper(
+                context = requireContext()
+            )
+        } catch (e: RuntimeException) {
+            Log.e("CRASH", "RuntimeException in Beeper cased by ToneGenerator")
+        }
 
         fragmentCameraBinding.viewFinder.post {
             // Set up the camera and its use cases.
@@ -205,7 +219,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 cameraProvider = cameraProviderFuture.get()
 
                 // Build and bind the camera use cases
-                bindCameraUseCases()
+                try {
+                    bindCameraUseCases()
+                } catch (e: NullPointerException) {
+                    Log.e("CRASH", "NPE: bindCameraUseCases")
+                }
             },
             ContextCompat.getMainExecutor(requireContext())
         )
@@ -229,7 +247,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
         // Preview. Only using the 4:3 ratio because this is the closest to our models
-        preview =
+                preview =
             Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
@@ -294,8 +312,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
     private fun classifyImage(image: ImageProxy) {
         // Copy out RGB bits to the shared bitmap buffer
-        // TODO CRASH: if the infer time is ~300 ms and pause app, bitmaps won't load and the whole
-        //  app will crash...
 
         try {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
@@ -331,10 +347,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             classificationResultsAdapter.updateResults(results)
             classificationResultsAdapter.notifyDataSetChanged()
 
-            // TODO: any test, exception, else?
-            // TODO: test use cases
-            // TODO PERFORMANCE: is this not slow?
-
             val result: String? = if(results?.isEmpty() == true || results!![0].categories.isEmpty()){
                 null
             }else{
@@ -355,7 +367,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 label = "None"
 
             if (label != "None" && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
-                // TODO TOO DIRECT: accessing val from here; maybe create abstract class
                 // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
                 //  banknote instead of previous, the app won't speak. Is this possible?
 
@@ -382,6 +393,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                         val turnOnClassification = Runnable {
                             classificationActive = true
                         }
+                        // TODO: 4Set label show time.
                         Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
                     }
                     Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)
@@ -393,10 +405,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             lastResultLabel = label
 
             if (haptizerActive) {
-                if (inferenceMillisCounter >= MILLIS_TO_HAPTIZE)
-                    // Check if torch is needed.
-                    torchManager.calculateBrightness(bitmapBuffer, camera)
-                    inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
+                torchManager.calculateBrightness(bitmapBuffer, camera, inferenceMillisCounter)
+                inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }
 
             inferenceMillisCounter += inferenceTime

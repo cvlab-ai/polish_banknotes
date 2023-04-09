@@ -28,6 +28,7 @@ import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
+import java.io.FileNotFoundException
 
 /**
  * The class computes calculations and manage models.
@@ -83,8 +84,11 @@ class ImageClassifierHelper(
                 "Image classifier failed to initialize. See error logs for details"
             )
             Log.e(TAG, "TFLite failed to load model with error: " + e.message)
+        } catch (e: FileNotFoundException) {
+            Log.e(TAG, "TFLite failed to load model with error: " + e.message)
         }
     }
+
 
     fun classify(image: Bitmap, rotation: Int) {
         if (imageClassifier == null) {
