@@ -33,7 +33,7 @@ import java.io.FileNotFoundException
 /**
  * The class computes calculations and manage models.
  */
-// TODO: Apply best settings
+// TODO optimize
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
     var numThreads: Int = 2,
@@ -56,7 +56,8 @@ class ImageClassifierHelper(
 
         val baseOptionsBuilder = BaseOptions.builder().setNumThreads(numThreads)
 
-        // TODO: which one set? Now is useless, because in client mode there is no option to choose
+        // TODO: which one set? Now is useless, because in client mode there is no option to
+        //  choose automatic
         when (currentDelegate) {
             DELEGATE_CPU -> {
                 // Default
@@ -102,11 +103,7 @@ class ImageClassifierHelper(
         // Create preprocessor for the image.
         // See https://www.tensorflow.org/lite/inference_with_metadata/
         //            lite_support#imageprocessor_architecture
-        val imageProcessor =
-            ImageProcessor.Builder()
-                /*.add(ResizeOp(128,128,ResizeOp.ResizeMethod.BILINEAR))
-                .add(NormalizeOp(127.5f,127.5f))*/
-                .build()
+        val imageProcessor = ImageProcessor.Builder().build()
 
         // Preprocess the image and convert it into a TensorImage for classification.
         val tensorImage = imageProcessor.process(TensorImage.fromBitmap(image))

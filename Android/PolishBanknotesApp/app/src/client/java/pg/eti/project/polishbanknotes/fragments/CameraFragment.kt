@@ -108,7 +108,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var mainInflater: LayoutInflater
     private lateinit var mainContainer: ViewGroup
-//    private lateinit var mainMenu: Menu
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -312,7 +311,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
     private fun classifyImage(image: ImageProxy) {
         // Copy out RGB bits to the shared bitmap buffer
-
         try {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
         } catch (e: java.lang.RuntimeException) {
@@ -361,6 +359,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // label is the result that have the most occurrences in lastLabels list
             var label = lastLabels.groupingBy { it }.eachCount().toList()
                 .maxByOrNull { (_, value) -> value }!!.first
+
             // If the user changed the banknote at the end of inference
             // and most of labels was from the one before.
             if(label == null || label != result)
