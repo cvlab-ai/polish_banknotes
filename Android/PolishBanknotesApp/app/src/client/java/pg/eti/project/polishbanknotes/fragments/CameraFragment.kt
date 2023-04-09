@@ -71,8 +71,21 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     }
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
-    private val fragmentCameraBinding
-        get() = _fragmentCameraBinding!!
+    private val fragmentCameraBinding: FragmentCameraBinding
+        get() {
+            // If binding is not set up yet, wait for it
+            return try {
+                _fragmentCameraBinding!!
+            } catch (e: NullPointerException) {
+                Log.e("CRASH", "NPE: fragmentCameraBinding")
+                _fragmentCameraBinding = FragmentCameraBinding.inflate(
+                    mainInflater,
+                    mainContainer,
+                    false
+                )
+                _fragmentCameraBinding!!
+            }
+        }
 
     private lateinit var imageClassifierHelper: ImageClassifierHelper
     private lateinit var bitmapBuffer: Bitmap
@@ -84,8 +97,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
+    private var lastResultLabel: String = ""
     private var cameraProvider: ProcessCameraProvider? = null
-    private var lastResultLabel = ""
     private var classificationActive = true
     private var haptizerActive = true
     private var inferenceMillisCounter: Long = 0L
@@ -97,6 +110,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private lateinit var torchManager: TorchManager
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var mainInflater: LayoutInflater
+    private lateinit var mainContainer: ViewGroup
+//    private lateinit var mainMenu: Menu
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -108,16 +124,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
-
-        // TODO test: if everything else works after returning to app.
-        // TODO crash
-        // NOTE (03.04.2023): these lines crashes the return from settings
-        // NOTE (07.04.2023): these lines are not needed when there is no light sensor
-//        torchStatus = (activity as MainActivity?)!!.torchManager.getTorchStatus()
-//        if(torchStatus)
-//            camera!!.cameraControl.enableTorch(true)
-
-
+        
         checkSettingsManagement()
     }
 
@@ -141,6 +148,12 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         setHasOptionsMenu(true)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu){
+        super.onPrepareOptionsMenu(menu)
+        val item = menu.findItem(R.id.action_settings)
+        item.isVisible = true
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -148,13 +161,14 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     ): View {
         _fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false)
 
+        mainInflater = inflater
+        mainContainer = container!!
         return fragmentCameraBinding.root
     }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         imageClassifierHelper =
             ImageClassifierHelper(
                 context = requireContext(),
@@ -163,9 +177,13 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        beeper = Beeper(
-            context = requireContext()
-        )
+        try {
+            beeper = Beeper(
+                context = requireContext()
+            )
+        } catch (e: RuntimeException) {
+            Log.e("CRASH", "RuntimeException in Beeper cased by ToneGenerator")
+        }
 
         fragmentCameraBinding.viewFinder.post {
             // Set up the camera and its use cases.
@@ -205,7 +223,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 cameraProvider = cameraProviderFuture.get()
 
                 // Build and bind the camera use cases
-                bindCameraUseCases()
+                try {
+                    bindCameraUseCases()
+                } catch (e: NullPointerException) {
+                    Log.e("CRASH", "NPE: bindCameraUseCases")
+                }
             },
             ContextCompat.getMainExecutor(requireContext())
         )
@@ -229,7 +251,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
         // Preview. Only using the 4:3 ratio because this is the closest to our models
-        preview =
+                preview =
             Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
@@ -382,6 +404,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                         val turnOnClassification = Runnable {
                             classificationActive = true
                         }
+                        // TODO: 4Set label show time.
                         Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
                     }
                     Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)

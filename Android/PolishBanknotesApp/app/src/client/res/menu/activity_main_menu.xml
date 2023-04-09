@@ -6,6 +6,7 @@
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/activity_main_menu_title"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText"
+        android:visible="false" />
 
 </menu>
