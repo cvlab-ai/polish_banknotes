@@ -6,13 +6,12 @@
         app:icon="@drawable/ic_baseline_sensors_24"
         app:title="@string/sensors_header">
 
-        <ListPreference
-            app:defaultValue="on"
-            app:entries="@array/manage_torch_entries"
-            app:entryValues="@array/manage_torch_values"
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
             app:key="manage_torch"
-            app:title="@string/manage_torch_title"
-            app:useSimpleSummaryProvider="true" />
+            app:summaryOff="@string/label_summary_off"
+            app:summaryOn="@string/label_summary_on"
+            app:title="@string/manage_torch_title" />
 
     </PreferenceCategory>
 
