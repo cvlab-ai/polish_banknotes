@@ -16,9 +16,11 @@ const val DEFAULT_PREFERENCES_FLAG = "default_preferences_flag"
 const val SMALL_LABEL_SIZE = 100F
 const val NORMAL_LABEL_SIZE = 150F
 const val BIGGEST_LABEL_SIZE = 200F
+const val SHOW_LABEL_MILLIS_DEFAULT = 1200L
 
 class LabelManager {
     private var isActive = true
+    private var showLabelMillis: Long = SHOW_LABEL_MILLIS_DEFAULT
 
     /**
      * If device has enabled TalkBack we can assume that it is used by blind person, so label
@@ -60,6 +62,10 @@ class LabelManager {
         return isActive
     }
 
+    fun getsShowLabelMillis(): Long {
+        return showLabelMillis
+    }
+
     fun updateAppearance(context: Context, fcb: FragmentCameraBinding) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -91,9 +97,14 @@ class LabelManager {
         fcb.labelTextView.setLayerType(LAYER_TYPE_SOFTWARE, null)
         fcb.labelTextView.setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
 
-
         // Set the text color
         val labelTextColorInt = sharedPreferences.getInt("label_stroke_color", 0)
         fcb.labelTextView.setTextColor(labelTextColorInt)
+
+        // Set show label time.
+        showLabelMillis = sharedPreferences.getInt(
+            "label_show_time",
+            SHOW_LABEL_MILLIS_DEFAULT.toInt()
+        ).toLong()
     }
 }

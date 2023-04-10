@@ -59,6 +59,7 @@ import java.util.concurrent.Executors
 //  pointing on banknote.
 // TODO question: is it needed?
 const val NUMBER_OF_LAST_RESULTS = 5
+const val SLIGHTLY_MORE_MILLIS = 500L
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
@@ -393,9 +394,16 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                             classificationActive = true
                         }
                         // TODO: 4Set label show time.
-                        Handler(Looper.getMainLooper()).postDelayed(turnOnClassification, 500)
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            turnOnClassification,
+                            labelManager.getsShowLabelMillis()
+                                    + SLIGHTLY_MORE_MILLIS
+                            )
                     }
-                    Handler(Looper.getMainLooper()).postDelayed(resetLabelTextView, 1200)
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        resetLabelTextView,
+                        labelManager.getsShowLabelMillis()
+                        )
                 }
 
                 lastLabels.clear()

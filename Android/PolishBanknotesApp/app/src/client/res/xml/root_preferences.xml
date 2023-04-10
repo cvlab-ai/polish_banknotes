@@ -48,6 +48,7 @@
             android:title="@string/label_stroke_color_title"
             app:dependency="label_on_off" />
 
+        <!-- TODO: show value under dot -->
         <SeekBarPreference
             android:defaultValue="10"
             android:key="label_outline_size"
@@ -63,6 +64,13 @@
         <!--            app:summaryOn="@string/attachment_summary_on"-->
         <!--            app:title="@string/attachment_title" />-->
 
+        <SeekBarPreference
+            android:defaultValue="@integer/label_show_millis_default"
+            android:key="label_show_time"
+            android:max="@integer/label_show_millis_max"
+            android:min="@integer/label_show_millis_min"
+            android:title="@string/label_show_time_title"
+            app:dependency="label_on_off" />
     </PreferenceCategory>
 </PreferenceScreen>
 

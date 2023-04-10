@@ -22,6 +22,10 @@
     <dimen name="stroke_small">4dp</dimen>
     <dimen name="round_button_medium">64dp</dimen>
 
+    <integer name="label_show_millis_default">1200</integer>
+    <integer name="label_show_millis_min">500</integer>
+    <integer name="label_show_millis_max">5000</integer>
+
     <!-- Bottom Sheet -->
     <dimen name="bottom_sheet_text_size">20sp</dimen>
     <dimen name="bottom_sheet_padding">16dp</dimen>
