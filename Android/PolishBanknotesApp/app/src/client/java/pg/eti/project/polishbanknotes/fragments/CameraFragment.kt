@@ -208,6 +208,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private fun checkSettingsManagement(){
         labelManager.checkIfEnable(requireContext())
         labelManager.updateAppearance(requireContext(), fragmentCameraBinding)
+        torchManager.checkIfEnable(requireContext())
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
