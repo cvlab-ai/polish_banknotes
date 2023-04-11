@@ -16,7 +16,6 @@
 
 package pg.eti.project.polishbanknotes
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -27,8 +26,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import pg.eti.project.polishbanknotes.accessability.Haptizer
-import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
 import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
 import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections

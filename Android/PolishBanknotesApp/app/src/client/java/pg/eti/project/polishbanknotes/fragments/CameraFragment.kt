@@ -17,7 +17,6 @@
 package pg.eti.project.polishbanknotes.fragments
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import java.lang.Exception
@@ -36,14 +35,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.google.android.material.appbar.AppBarLayout
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
-import pg.eti.project.polishbanknotes.MainActivity
 import pg.eti.project.polishbanknotes.R
-import pg.eti.project.polishbanknotes.accessability.Beeper
-import pg.eti.project.polishbanknotes.accessability.Haptizer
-import pg.eti.project.polishbanknotes.accessability.TalkBackSpeaker
+import pg.eti.project.polishbanknotes.accessibility.Beeper
+import pg.eti.project.polishbanknotes.accessibility.Haptizer
+import pg.eti.project.polishbanknotes.accessibility.TalkBackSpeaker
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 import pg.eti.project.polishbanknotes.sensors.TorchManager
 import pg.eti.project.polishbanknotes.settings_management.LabelManager
@@ -209,6 +206,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         labelManager.checkIfEnable(requireContext())
         labelManager.updateAppearance(requireContext(), fragmentCameraBinding)
         torchManager.checkIfEnable(requireContext())
+        talkBackSpeaker.checkIfEnable(requireContext())
+        beeper.checkIfEnable(requireContext())
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -373,9 +372,22 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
                 // We want only to beep at highest denominations.
                 when (label) {
-                    "200" -> beeper.beep()
-                    "500" -> beeper.doubleBeep()
-                    else -> talkBackSpeaker.speak(label)
+                    "200" -> {
+                        if (beeper.getIsActive() && talkBackSpeaker.getIsActive())
+                            beeper.beep()
+                        else if (talkBackSpeaker.getIsActive())
+                            talkBackSpeaker.speak(label)
+                    }
+                    "500" -> {
+                        if (beeper.getIsActive() && talkBackSpeaker.getIsActive())
+                            beeper.doubleBeep()
+                        else if (talkBackSpeaker.getIsActive())
+                            talkBackSpeaker.speak(label)
+                    }
+                    else -> {
+                        if (talkBackSpeaker.getIsActive())
+                            talkBackSpeaker.speak(label)
+                    }
                 }
 
                 // Show the label in textView.
