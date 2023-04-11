@@ -60,8 +60,18 @@
     <!-- Preference Headers PL -->
     <string name="sensors_header">Sensory</string>
     <string name="label_header">Informacje ekranowe</string>
+    <string name="accessibility_header">Dostępność</string>
 
     <!-- Messages Preferences PL -->
+    <!-- TalkBackSpeaker -->
+    <string name="talkback_speaker_on_off_title">Wypowiadanie etykiety</string>
+    <string name="speaker_on_summary">Włączone</string>
+    <string name="speaker_off_summary">Wyłączone </string>
+
+    <string name="speaker_beep_title">Sygnały dźwiękowe</string>
+    <string name="speaker_beep_on_summary">Sygnały dźwiękowe przy 200 i 500</string>
+    <string name="speaker_beep_off_summary">Wypowiadanie nominałów 200 i 500</string>
+
     <!-- Torch -->
     <string name="manage_torch_title">Lampa błyskowa</string>
     <string name="manage_torch_on">Włączona</string>

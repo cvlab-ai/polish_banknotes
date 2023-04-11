@@ -16,6 +16,27 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:icon="@drawable/ic_baseline_accessibility_new_24"
+        app:title="@string/accessibility_header">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="manage_speaker"
+            app:summaryOff="@string/speaker_off_summary"
+            app:summaryOn="@string/speaker_on_summary"
+            app:title="@string/talkback_speaker_on_off_title" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="manage_speaker_beep"
+            app:summaryOff="@string/speaker_beep_off_summary"
+            app:summaryOn="@string/speaker_beep_on_summary"
+            app:title="@string/speaker_beep_title"
+            app:dependency="manage_speaker"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:icon="@drawable/ic_baseline_font_download_24"
         app:title="@string/label_header">
 

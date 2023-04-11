@@ -1,12 +1,16 @@
-package pg.eti.project.polishbanknotes.accessability
+package pg.eti.project.polishbanknotes.accessibility
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.accessibility.AccessibilityManager
+import androidx.preference.PreferenceManager
+import pg.eti.project.polishbanknotes.settings_management.DEFAULT_PREFERENCES_FLAG
 import java.util.*
 
 class TalkBackSpeaker(context: Context) {
     private lateinit var textToSpeech: TextToSpeech
+    private var isActive = true
 
     init {
         // Setting TextToSpeech (TalkBack)
@@ -33,6 +37,17 @@ class TalkBackSpeaker(context: Context) {
                 Log.e("TTS", "Initialization failed")
             }
         }
+    }
+
+    fun checkIfEnable(context: Context) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val speakerOnOff = "manage_speaker"
+
+        isActive = sharedPreferences.getBoolean(speakerOnOff, true)
+    }
+
+    fun getIsActive(): Boolean {
+        return isActive
     }
 
     // Function responsible for speaking the banknotes values.
