@@ -6,6 +6,5 @@
         android:id="@+id/action_done"
         android:icon="@drawable/ic_baseline_arrow_back_24"
         android:title="@string/settings_activity_menu_title"
-        app:showAsAction="ifRoom"
-        app:contentDescription="@string/back_from_settings_icon_desc" />
+        app:showAsAction="ifRoom"/>
 </menu>

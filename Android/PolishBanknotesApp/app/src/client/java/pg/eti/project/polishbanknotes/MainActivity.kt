@@ -24,19 +24,18 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import pg.eti.project.polishbanknotes.databinding.ActivityMainBinding
-import pg.eti.project.polishbanknotes.fragments.CameraFragment
 import pg.eti.project.polishbanknotes.fragments.CameraFragmentDirections
 import pg.eti.project.polishbanknotes.fragments.SettingsFragmentDirections
+
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 
+    // TODO SCOPE?
     private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.action_done -> {
                     Navigation.findNavController(this, R.id.fragment_container)
                         .navigate(SettingsFragmentDirections.actionSettingsFragmentToCameraFragment())
+                    // TODO: back button should go out of app not go back to settings (back stack)
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
@@ -88,33 +88,12 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    private fun isCameraFragment(): Boolean {
-        // Get the NavHostFragment associated with the NavHost
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-
-        // Get the NavController from the NavHostFragment
-        val navController = navHostFragment.navController
-
-        // Get the current destination ID
-        val currentDestinationId = navController.currentDestination?.id
-
-        // Check the current destination ID to determine the active fragment
-        if (currentDestinationId == R.id.camera_fragment)
-            return true
-
-        return false
-    }
-
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
             // (https://issuetracker.google.com/issues/139738913)
             finishAfterTransition()
         }
-
-        // When CameraFragment then close app.
-        if (isCameraFragment())
-            finish()
 
         super.onBackPressed()
     }

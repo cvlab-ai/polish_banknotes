@@ -19,6 +19,7 @@ package pg.eti.project.polishbanknotes.fragments
 import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import java.lang.Exception
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -33,7 +34,6 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.Navigation
 import org.tensorflow.lite.task.vision.classifier.Classifications
 import pg.eti.project.polishbanknotes.ImageClassifierHelper
@@ -94,10 +94,10 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var lastResultLabel: String = ""
     private var cameraProvider: ProcessCameraProvider? = null
     private var classificationActive = true
+    private var haptizerActive = true
     private var inferenceMillisCounter: Long = 0L
     private var lastLabels = mutableListOf<String?>()
     private lateinit var beeper: Beeper
-
     private lateinit var haptizer: Haptizer
     private lateinit var talkBackSpeaker: TalkBackSpeaker
     private lateinit var labelManager: LabelManager
@@ -207,16 +207,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         labelManager.updateAppearance(requireContext(), fragmentCameraBinding)
         torchManager.checkIfEnable(requireContext())
         talkBackSpeaker.checkIfEnable(requireContext())
-
-        try {
-            beeper.checkIfEnable(requireContext())
-        } catch (e: UninitializedPropertyAccessException) {
-            Log.e("CRASH", "UninitializedPropertyAccessException in Beeper: $e")
-        } catch (ee: RuntimeException) {
-            Log.e("CRASH", "RuntimeException in Beeper: $ee")
-        }
-
-        haptizer.checkIfEnable(requireContext())
+        beeper.checkIfEnable(requireContext())
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -376,6 +367,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 label = "None"
 
             if (label != "None" && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
+                // TODO CONTRARY USE-CASE #1: If someone will fastly put other (the same value)
+                //  banknote instead of previous, the app won't speak. Is this possible?
 
                 // We want only to beep at highest denominations.
                 when (label) {
@@ -400,6 +393,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 // Show the label in textView.
                 // TODO: if all the time on one banknote then it will say label,
                 //  even if we are not pointing at it.
+                // TODO: give option to turn on TalkBackSpeaker if TalkBack is not turned on.
 
                 if (labelManager.getIsActive()) {
                     fragmentCameraBinding.labelTextView.text = label
@@ -412,6 +406,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                         val turnOnClassification = Runnable {
                             classificationActive = true
                         }
+                        // TODO: 4Set label show time.
                         Handler(Looper.getMainLooper()).postDelayed(
                             turnOnClassification,
                             labelManager.getsShowLabelMillis()
@@ -429,7 +424,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             lastResultLabel = label
 
-            if (haptizer.getIsActive()) {
+            if (haptizerActive) {
                 torchManager.calculateBrightness(bitmapBuffer, camera, inferenceMillisCounter)
                 inferenceMillisCounter = haptizer.vibrateShot(inferenceMillisCounter)
             }

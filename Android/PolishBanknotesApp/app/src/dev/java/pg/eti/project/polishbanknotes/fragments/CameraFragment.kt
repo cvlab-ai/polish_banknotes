@@ -381,7 +381,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     }
 
     private fun classifyImage(image: ImageProxy) {
-        // Copy out RGB bits to the shared bitmap buffer .
+        // Copy out RGB bits to the shared bitmap buffer
+        // TODO CRASH: if the infer time is ~300 ms and pause app, bitmaps won't load and the whole
+        //  app will crash...
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
 
         if (classificationActive) {
