@@ -8,12 +8,14 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.annotation.RequiresApi
+import androidx.preference.PreferenceManager
 
 const val MILLIS_TO_HAPTIZE = 2000L
 
 class Haptizer(context: Context) {
     private var haptizer: Vibrator
     private val haptizerTimings = longArrayOf(MILLIS_TO_HAPTIZE, 35)
+    private var isActive = true
 
     init {
         // Setting the haptizer.
@@ -25,6 +27,17 @@ class Haptizer(context: Context) {
             @Suppress("DEPRECATION")
             context.getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
+    }
+
+    fun checkIfEnable(context: Context) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val manageHaptizerKey = "manage_haptizer"
+
+        isActive = sharedPreferences.getBoolean(manageHaptizerKey, true)
+    }
+
+    fun getIsActive(): Boolean {
+        return isActive
     }
 
     /**
