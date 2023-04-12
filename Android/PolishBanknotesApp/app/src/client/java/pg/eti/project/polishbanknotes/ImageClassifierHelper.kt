@@ -33,6 +33,7 @@ import java.io.FileNotFoundException
 /**
  * The class computes calculations and manage models.
  */
+// TODO optimize
 class ImageClassifierHelper(
     var threshold: Float = 0.0f,
     var numThreads: Int = 2,

@@ -9,17 +9,9 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="manage_torch"
-            app:summaryOff="@string/manage_torch_off"
-            app:summaryOn="@string/manage_torch_on"
+            app:summaryOff="@string/label_summary_off"
+            app:summaryOn="@string/label_summary_on"
             app:title="@string/manage_torch_title" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="manage_haptizer"
-            app:summaryOff="@string/haptizer_summary_off"
-            app:summaryOn="@string/haptizer_summary_on"
-            app:title="@string/manage_haptizer_title"
-            app:contentDescription="null"/>
 
     </PreferenceCategory>
 
@@ -76,6 +68,7 @@
             android:title="@string/label_stroke_color_title"
             app:dependency="label_on_off" />
 
+        <!-- TODO: show value under dot -->
         <SeekBarPreference
             android:defaultValue="10"
             android:key="label_outline_size"
@@ -83,6 +76,13 @@
             android:min="0"
             android:title="@string/label_outline_size_title"
             app:dependency="label_on_off" />
+
+        <!--        <SwitchPreferenceCompat-->
+        <!--            app:dependency="sync"-->
+        <!--            app:key="attachment"-->
+        <!--            app:summaryOff="@string/attachment_summary_off"-->
+        <!--            app:summaryOn="@string/attachment_summary_on"-->
+        <!--            app:title="@string/attachment_title" />-->
 
         <SeekBarPreference
             android:defaultValue="@integer/label_show_millis_default"
