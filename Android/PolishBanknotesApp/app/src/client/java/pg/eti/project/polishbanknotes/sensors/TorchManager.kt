@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import androidx.camera.core.Camera
-import androidx.core.graphics.get
-import androidx.core.graphics.luminance
+import androidx.core.graphics.*
 import androidx.preference.PreferenceManager
 import pg.eti.project.polishbanknotes.settings_management.DEFAULT_PREFERENCES_FLAG
+import kotlin.math.sqrt
 
 const val MILLIS_TO_CHECK_TORCH = 2000L
 
@@ -23,6 +23,7 @@ class TorchManager {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val manageTorchKey = "manage_torch"
 
+        Log.e("TEST", sharedPreferences.getBoolean(manageTorchKey, true).toString());
         isActive = sharedPreferences.getBoolean(manageTorchKey, true)
     }
 
@@ -36,14 +37,24 @@ class TorchManager {
 
     fun calculateBrightness(image: Bitmap, camera: Camera?, inferenceMillisCounter: Long){
         if (inferenceMillisCounter >= MILLIS_TO_CHECK_TORCH && isActive) {
-            var brightness = 0.0
+            var r = 0.0
+            var g = 0.0
+            var b = 0.0
+            var pixelCounter = 0
             for (h in 0 until image.height) {
                 for (w in 0 until image.width) {
-                    brightness += image[w, h].luminance
+                    r += image[w, h].red
+                    g += image[w, h].green
+                    b += image[w, h].blue
+                    pixelCounter += 1
                 }
             }
 
-            val imageBrightness = brightness / (image.width * image.height)
+            r /= pixelCounter
+            g /= pixelCounter
+            b /= pixelCounter
+
+            val imageBrightness = sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b))
 
             if (imageBrightness < LUMINANCE_THRESHOLD) {
                 enableTorch(camera)
