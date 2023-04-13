@@ -17,7 +17,7 @@
         ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
     -->
 <resources>
-    <string name="app_name">Polskie Banknoty</string>
+    <string name="app_name">Skaner Polskich Banknotów</string>
 
     <string name="alt_bottom_sheet_chevron">Bottom sheet expandable indicator</string>
 
