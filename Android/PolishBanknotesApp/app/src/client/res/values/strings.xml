@@ -17,7 +17,7 @@
         ~ on above license. Every change has been made or approved by me (https://github.com/jankejc).
     -->
 <resources>
-    <string name="app_name">Polskie Banknoty</string>
+    <string name="app_name">Skaner Polskich Banknotów</string>
 
     <string name="alt_bottom_sheet_chevron">Bottom sheet expandable indicator</string>
 
@@ -56,6 +56,12 @@
         <!--        <item>Flower Model</item>-->
     </string-array>
 
+    <!-- TALKBACK CONTENT DESCRIPTIONS PL -->
+    <string name="settings_icon_desc">Ikona ustawień</string>
+    <string name="back_from_settings_icon_desc">Ikona powrotu do rozpoznawania</string>
+    <string name="blank_desc"></string>
+
+
     <!-- TODO: translate app to english (maybe) -->
     <!-- Preference Headers PL -->
     <string name="sensors_header">Sensory</string>
@@ -75,6 +81,12 @@
     <!-- Torch -->
     <string name="manage_torch_title">Lampa błyskowa</string>
     <string name="manage_torch_on">Włączona</string>
+    <string name="manage_torch_off">Wyłączona</string>
+
+    <!-- Torch -->
+    <string name="manage_haptizer_title">Wibracje</string>
+    <string name="haptizer_summary_on">Włączone</string>
+    <string name="haptizer_summary_off">Wyłączone</string>
 
     <!-- Label -->
     <string name="label_key">label_on_off</string>
