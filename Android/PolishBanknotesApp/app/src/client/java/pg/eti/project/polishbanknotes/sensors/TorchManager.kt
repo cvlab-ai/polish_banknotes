@@ -2,13 +2,10 @@ package pg.eti.project.polishbanknotes.sensors
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
-import android.view.accessibility.AccessibilityManager
 import androidx.camera.core.Camera
 import androidx.core.graphics.get
 import androidx.core.graphics.luminance
 import androidx.preference.PreferenceManager
-import pg.eti.project.polishbanknotes.settings_management.DEFAULT_PREFERENCES_FLAG
 
 const val MILLIS_TO_CHECK_TORCH = 2000L
 

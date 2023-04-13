@@ -48,7 +48,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 // Handle the change in SeekBarPreference here
                 val progress = newValue as Int
                 val floatValue = progress / 1000.0f // Convert to float, assuming it is in millis
-                Log.d("VALUE", "progress: $progress, floatValue: $floatValue")
+//                Log.d("VALUE", "progress: $progress, floatValue: $floatValue")
 
                 // Update the preference summary with the float value
                 var summary = String.format(Locale.US, "%.1f", floatValue) + " s"
@@ -99,7 +99,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         var isLabelActive = sp.getBoolean(keyString, true)
         var spcLabelOnOff = findPreference<SwitchPreferenceCompat>(keyString)
         spcLabelOnOff!!.isChecked = isLabelActive
-        Log.d("SETTINGS", "isLabelActive: $isLabelActive")
+//        Log.d("SETTINGS", "isLabelActive: $isLabelActive")
 
         // Prepare seek bar for label show time - summary.
         keyString = "label_show_time"

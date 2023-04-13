@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 else -> super.onOptionsItemSelected(item)
             }
         } catch (e: IllegalArgumentException) {
-            Log.e("CRASH", "$e")
+//            Log.e("CRASH", "$e")
             return false
         }
     }
