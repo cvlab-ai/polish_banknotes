@@ -35,8 +35,8 @@ import java.io.FileNotFoundException
  */
 // TODO optimize
 class ImageClassifierHelper(
-    var threshold: Float = 0.0f,
-    var numThreads: Int = 2,
+    var threshold: Float = 0.7f,
+    var numThreads: Int = 1,
     var maxResults: Int = 1,
     var currentDelegate: Int = 0,
     val context: Context,
