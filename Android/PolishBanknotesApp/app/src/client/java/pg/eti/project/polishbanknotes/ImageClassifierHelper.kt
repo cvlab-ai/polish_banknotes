@@ -43,7 +43,7 @@ class ImageClassifierHelper(
     val imageClassifierListener: ClassifierListener?,
 ) {
     private var imageClassifier: ImageClassifier? = null
-    private val modelName = "yolov5s.tflite"
+    private val modelName = "yolov5s_64.tflite"
 
     init {
         setupImageClassifier()
