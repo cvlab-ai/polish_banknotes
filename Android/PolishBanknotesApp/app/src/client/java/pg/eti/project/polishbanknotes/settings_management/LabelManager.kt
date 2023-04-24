@@ -45,10 +45,10 @@ class LabelManager {
             if (am!!.isTouchExplorationEnabled) {
                 isActive = false
                 sharedPreferencesEditor.putBoolean(labelOnOffKey, false)
-                Log.d("LABEL_MANAGER", "TalkBack ON")
+//                Log.d("LABEL_MANAGER", "TalkBack ON")
             } else {
                 sharedPreferencesEditor.putBoolean(labelOnOffKey, true)
-                Log.d("LABEL_MANAGER", "TalkBack OFF")
+//                Log.d("LABEL_MANAGER", "TalkBack OFF")
             }
 
             // Update the flag to indicate that default preferences have been set

@@ -71,7 +71,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             return try {
                 _fragmentCameraBinding!!
             } catch (e: NullPointerException) {
-                Log.e("CRASH", "NPE: fragmentCameraBinding")
+//                Log.e("CRASH", "NPE: fragmentCameraBinding")
                 _fragmentCameraBinding = FragmentCameraBinding.inflate(
                     mainInflater,
                     mainContainer,
@@ -175,7 +175,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 context = requireContext()
             )
         } catch (e: RuntimeException) {
-            Log.e("CRASH", "RuntimeException in Beeper cased by ToneGenerator")
+//            Log.e("CRASH", "RuntimeException in Beeper cased by ToneGenerator")
         }
 
         fragmentCameraBinding.viewFinder.post {
@@ -231,7 +231,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                 try {
                     bindCameraUseCases()
                 } catch (e: NullPointerException) {
-                    Log.e("CRASH", "NPE: bindCameraUseCases")
+//                    Log.e("CRASH", "NPE: bindCameraUseCases")
                 }
             },
             ContextCompat.getMainExecutor(requireContext())
@@ -298,7 +298,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
         } catch (exc: Exception) {
-            Log.e(TAG, "Use case binding failed", exc)
+//            Log.e(TAG, "Use case binding failed", exc)
         }
     }
 
@@ -324,9 +324,9 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         try {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
         } catch (e: java.lang.RuntimeException) {
-            Log.e("BUFF_FULL", "ROME parse error: $e")
+//            Log.e("BUFF_FULL", "ROME parse error: $e")
         } catch (e2: Error) {
-            Log.e("BUFF_FULL", "ROME parse error2: $e2")
+//            Log.e("BUFF_FULL", "ROME parse error2: $e2")
         }
 
 
@@ -435,7 +435,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             }
 
             inferenceMillisCounter += inferenceTime
-             Log.d("MILLIS", "$inferenceMillisCounter")
+//             Log.d("MILLIS", "$inferenceMillisCounter")
         }
     }
 
