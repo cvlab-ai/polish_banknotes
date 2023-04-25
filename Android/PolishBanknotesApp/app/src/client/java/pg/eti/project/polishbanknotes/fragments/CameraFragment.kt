@@ -198,7 +198,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
         sharedPreferencesEditor = sharedPreferences.edit()
 
         // Init settings management.
-        labelManager = LabelManager()
+        labelManager = LabelManager(requireActivity())
         checkSettingsManagement()
     }
 
