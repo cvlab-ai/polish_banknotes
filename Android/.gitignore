@@ -25,7 +25,9 @@ local.properties
   
 # Android Studio
 .idea
-.gradle
+*.gradle
+# /PolishBanknotesApp/*.gradle
+# /PolishBanknotesApp/app/*.gradle
 /*/local.properties
 /*/out
 /*/*/build
