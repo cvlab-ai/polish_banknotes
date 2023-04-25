@@ -26,15 +26,15 @@ class TalkBackSpeaker(context: Context) {
                     if (englishResult == TextToSpeech.LANG_MISSING_DATA
                         || englishResult == TextToSpeech.LANG_NOT_SUPPORTED
                     ) {
-                        Log.e("TTS", "Language not supported")
+//                        Log.e("TTS", "Language not supported")
                     } else {
-                        Log.i("TTS", "Language set: $englishLocale (backup)")
+//                        Log.i("TTS", "Language set: $englishLocale (backup)")
                     }
                 } else {
-                    Log.i("TTS", "Language set: ${Locale.getDefault()}")
+//                    Log.i("TTS", "Language set: ${Locale.getDefault()}")
                 }
             } else {
-                Log.e("TTS", "Initialization failed")
+//                Log.e("TTS", "Initialization failed")
             }
         }
     }

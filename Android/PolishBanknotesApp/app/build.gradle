@@ -27,14 +27,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
     namespace 'pg.eti.project.polishbanknotes'
 
     defaultConfig {
         applicationId "pg.eti.project.polishbanknotes"
         minSdk 24
         // Must be the same as compileSdk
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "0.4"
 
@@ -54,6 +54,7 @@ android {
 
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

@@ -34,15 +34,15 @@ import java.io.FileNotFoundException
  * The class computes calculations and manage models.
  */
 class ImageClassifierHelper(
-    var threshold: Float = 0.0f,
-    var numThreads: Int = 2,
+    var threshold: Float = 0.7f,
+    var numThreads: Int = 1,
     var maxResults: Int = 1,
     var currentDelegate: Int = 0,
     val context: Context,
     val imageClassifierListener: ClassifierListener?,
 ) {
     private var imageClassifier: ImageClassifier? = null
-    private val modelName = "yolov5s.tflite"
+    private val modelName = "yolov5s_63.tflite"
 
     init {
         setupImageClassifier()
@@ -83,9 +83,9 @@ class ImageClassifierHelper(
             imageClassifierListener?.onError(
                 "Image classifier failed to initialize. See error logs for details"
             )
-            Log.e(TAG, "TFLite failed to load model with error: " + e.message)
+//            Log.e(TAG, "TFLite failed to load model with error: " + e.message)
         } catch (e: FileNotFoundException) {
-            Log.e(TAG, "TFLite failed to load model with error: " + e.message)
+//            Log.e(TAG, "TFLite failed to load model with error: " + e.message)
         }
     }
 
