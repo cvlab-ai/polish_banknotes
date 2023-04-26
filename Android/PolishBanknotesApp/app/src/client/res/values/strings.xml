@@ -41,8 +41,7 @@
     <string name="label_models">ML Model</string>
 
     <!-- PL -->
-    <string name="activity_main_menu_title">SettingsActivity</string>
-    <string name="settings_activity_menu_title">Ustawienia</string>
+    <string name="activity_main_menu_title">Ustawienia</string>
 
     <string-array name="delegate_spinner_titles">
         <item>CPU</item>

@@ -32,7 +32,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         loadSettings()
-//        Log.d("PRESENT", "inicjalizacja")
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
