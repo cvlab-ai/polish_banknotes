@@ -1,26 +1,48 @@
 package pg.eti.project.polishbanknotes.settings_management
 
+import android.app.Activity
 import android.content.Context
 import android.content.Context.ACCESSIBILITY_SERVICE
+import android.content.res.Resources
 import android.graphics.Color
+import android.os.Build
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.View.LAYER_TYPE_SOFTWARE
+import android.view.WindowMetrics
 import android.view.accessibility.AccessibilityManager
-import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import androidx.preference.SwitchPreferenceCompat
-import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 
+
 const val DEFAULT_PREFERENCES_FLAG = "default_preferences_flag"
-const val SMALL_LABEL_SIZE = 100F
-const val NORMAL_LABEL_SIZE = 150F
-const val BIGGEST_LABEL_SIZE = 200F
+const val SMALL_LABEL_SIZE_DIVISOR = 3F
+const val NORMAL_LABEL_SIZE_DIVISOR = 2.5F
+const val BIGGEST_LABEL_SIZE_DIVISOR = 1.8F
 const val SHOW_LABEL_MILLIS_DEFAULT = 1200L
 
-class LabelManager {
+class LabelManager(activity: Activity) {
     private var isActive = true
     private var showLabelMillis: Long = SHOW_LABEL_MILLIS_DEFAULT
+    private var screenWidthSp = 0F
+
+    init {
+        val displayMetrics = Resources.getSystem().displayMetrics
+        val screenWidthPx: Int
+        val density: Float
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics: WindowMetrics = activity.windowManager.currentWindowMetrics
+            screenWidthPx = windowMetrics.bounds.width()
+        } else {
+            @Suppress("DEPRECATION")
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            screenWidthPx = displayMetrics.widthPixels
+        }
+
+        val spValue = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, screenWidthPx.toFloat(), displayMetrics)
+        screenWidthSp = spValue / displayMetrics.density
+    }
 
     /**
      * If device has enabled TalkBack we can assume that it is used by blind person, so label
@@ -71,10 +93,14 @@ class LabelManager {
 
         // Label text size.
         when (sharedPreferences.getString("label_size", "150")) {
-            "100" -> fcb.labelTextView.textSize = SMALL_LABEL_SIZE
-            "150" -> fcb.labelTextView.textSize = NORMAL_LABEL_SIZE
-            "200" -> fcb.labelTextView.textSize = BIGGEST_LABEL_SIZE
-            else -> fcb.labelTextView.textSize = NORMAL_LABEL_SIZE
+            "100" -> fcb.labelTextView.textSize =
+                (screenWidthSp / SMALL_LABEL_SIZE_DIVISOR)
+            "150" -> fcb.labelTextView.textSize =
+                (screenWidthSp / NORMAL_LABEL_SIZE_DIVISOR)
+            "200" -> fcb.labelTextView.textSize =
+                (screenWidthSp / BIGGEST_LABEL_SIZE_DIVISOR)
+            else -> fcb.labelTextView.textSize =
+                (screenWidthSp / NORMAL_LABEL_SIZE_DIVISOR)
         }
 
 
