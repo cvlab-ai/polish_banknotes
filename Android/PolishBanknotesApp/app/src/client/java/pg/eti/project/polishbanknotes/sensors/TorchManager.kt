@@ -12,7 +12,8 @@ class TorchManager {
     private var isActive = true
 
     companion object {
-        private const val LUMINANCE_THRESHOLD = 0.3  // Relative luminance has values in range 0.0 (pure black) - 1.0 (pure white)
+        private const val LUMINANCE_THRESHOLD = 0.15  // Relative luminance has values in range 0
+    // .0 (pure black) - 1.0 (pure white)
     }
 
     fun checkIfEnable(context: Context) {
