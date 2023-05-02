@@ -16,9 +16,12 @@
 
 package pg.eti.project.polishbanknotes
 
+import android.content.Context
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -117,5 +120,17 @@ class MainActivity : AppCompatActivity() {
             finish()
 
         super.onBackPressed()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) AudioManager.ADJUST_RAISE
+                else AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI
+            )
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
