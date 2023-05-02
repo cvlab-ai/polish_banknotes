@@ -406,21 +406,11 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                     classificationActive = false
                     val resetLabelTextView = Runnable {
                         fragmentCameraBinding.labelTextView.text = ""
-                        // To minimize bug of pointing at another banknote
-                        // and saying the previous one.
-                        // Slightly slower working, but still good.
-                        val turnOnClassification = Runnable {
-                            classificationActive = true
-                        }
-                        Handler(Looper.getMainLooper()).postDelayed(
-                            turnOnClassification,
-                            labelManager.getsShowLabelMillis()
-                                    + SLIGHTLY_MORE_MILLIS
-                            )
+                        classificationActive = true
                     }
                     Handler(Looper.getMainLooper()).postDelayed(
-                        resetLabelTextView,
-                        labelManager.getsShowLabelMillis()
+                            resetLabelTextView,
+                            labelManager.getsShowLabelMillis()
                         )
                 }
 
@@ -435,7 +425,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             }
 
             inferenceMillisCounter += inferenceTime
-//             Log.d("MILLIS", "$inferenceMillisCounter")
         }
     }
 
