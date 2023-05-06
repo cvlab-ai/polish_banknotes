@@ -13,6 +13,7 @@ import android.view.View.LAYER_TYPE_SOFTWARE
 import android.view.WindowMetrics
 import android.view.accessibility.AccessibilityManager
 import androidx.preference.PreferenceManager
+import pg.eti.project.polishbanknotes.R
 import pg.eti.project.polishbanknotes.databinding.FragmentCameraBinding
 
 
@@ -105,15 +106,12 @@ class LabelManager(activity: Activity) {
 
 
         // Label outline color and size.
-        val labelOutlineColorInt = sharedPreferences.getInt(
-                "label_outline_color",
-                Color.parseColor("#FFFFFFFF")
-            )
-        val labelOutlineColorString = Integer.toHexString(labelOutlineColorInt)
-
+        val shadowColor = sharedPreferences.getInt(
+            "label_outline_color",
+            context.getColor(R.color.label_text_view_outline_color)
+        )
         val labelOutlineSize = sharedPreferences.getInt("label_outline_size", 10).toFloat()
 
-        val shadowColor = Color.parseColor("#$labelOutlineColorString")
         val shadowRadius = labelOutlineSize
         val shadowDx = labelOutlineSize
         val shadowDy = labelOutlineSize
@@ -124,7 +122,10 @@ class LabelManager(activity: Activity) {
         fcb.labelTextView.setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
 
         // Set the text color
-        val labelTextColorInt = sharedPreferences.getInt("label_stroke_color", 0)
+        val labelTextColorInt = sharedPreferences.getInt(
+            "label_stroke_color",
+            context.getColor(R.color.label_text_view_color)
+        )
         fcb.labelTextView.setTextColor(labelTextColorInt)
 
         // Set show label time.
