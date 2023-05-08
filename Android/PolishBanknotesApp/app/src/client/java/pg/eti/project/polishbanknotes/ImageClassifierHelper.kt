@@ -34,7 +34,7 @@ import java.io.FileNotFoundException
  * The class computes calculations and manage models.
  */
 class ImageClassifierHelper(
-    var threshold: Float = 0.7f,
+    var threshold: Float = 0.75f,
     var numThreads: Int = 1,
     var maxResults: Int = 1,
     var currentDelegate: Int = 0,
@@ -42,7 +42,7 @@ class ImageClassifierHelper(
     val imageClassifierListener: ClassifierListener?,
 ) {
     private var imageClassifier: ImageClassifier? = null
-    private val modelName = "yolov5s_63.tflite"
+    private val modelName = "yolov5s_deep.tflite"
 
     init {
         setupImageClassifier()
