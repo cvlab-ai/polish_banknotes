@@ -1,12 +1,14 @@
-# *FutureAppName*
+# Czytnik Polskich Banknotów
 
-*FutureAppName* is an Open Source mobile app, which goal is to help visually handicapped people live the life we all do. By detecting our local currency's denomination (PLN - Polish zloty) using neural networks, it allows a user to know what banknote they're holding. The application provides support on a daily basis, such as going shopping, using ATMs, buying tickets or visiting restaurants.
+Czytnik Polskich Banknotów is an Open Source mobile app, which goal is to help visually handicapped people live the life we all do. By detecting our local currency's denomination (PLN - Polish zloty) using neural networks, it allows a user to know what banknote they're holding. The application provides support on a daily basis, such as going shopping, using ATMs, buying tickets or visiting restaurants.
+
+At [Play Store](https://play.google.com/store/apps/details?id=pg.eti.project.polishbanknotes)
 
 ## About technologies
 ### Mobile app
 We're developing two versions of this application - one for Android and one for iOS. Both of them are written natively using corresponding technologies - Kotlin for Android and Swift for iOS. Currently, supported system versions are:
 * iOS 11.0+ (iPhone 5s+)
-* Android #TODO
+* Android 7+
 
 ### Neural network
 The neural network we're working on is based on TensorFlow+Keras Image classification. In future, we are planning using Object Classification for detecting coins.
