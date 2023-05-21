@@ -12,7 +12,7 @@ class Classifier {
     @Published var error: Error?
     
     static let shared = Classifier()
-    private let defaultModelURL = Bundle.main.url(forResource: "Resnet50-2", withExtension: "mlmodelc")!
+    private let defaultModelURL = Bundle.main.url(forResource: "model_ml1", withExtension: "mlmodelc")!
     private var currentModelURL: URL;
     private let dispatchQueue = DispatchQueue(label: "classifier.queue", qos: .userInitiated)
     
@@ -103,7 +103,7 @@ class ClassifierOutput: MLFeatureProvider {
 
     /// Probability of each category as dictionary of strings to doubles
     var classLabelProbs: [String : Double] {
-        return self.provider.featureValue(for: "classLabelProbs")!.dictionaryValue as! [String : Double]
+        return self.provider.featureValue(for: "Identity")!.dictionaryValue as! [String : Double]
     }
 
     /// Most likely image category as string value
@@ -120,7 +120,7 @@ class ClassifierOutput: MLFeatureProvider {
     }
 
     init(classLabelProbs: [String : Double], classLabel: String) {
-        self.provider = try! MLDictionaryFeatureProvider(dictionary: ["classLabelProbs" : MLFeatureValue(dictionary: classLabelProbs as [AnyHashable : NSNumber]), "classLabel" : MLFeatureValue(string: classLabel)])
+        self.provider = try! MLDictionaryFeatureProvider(dictionary: ["Identity" : MLFeatureValue(dictionary: classLabelProbs as [AnyHashable : NSNumber]), "classLabel" : MLFeatureValue(string: classLabel)])
     }
 
     init(features: MLFeatureProvider) {
