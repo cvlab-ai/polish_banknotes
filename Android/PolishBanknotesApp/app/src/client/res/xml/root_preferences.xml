@@ -35,7 +35,7 @@
             app:title="@string/talkback_speaker_on_off_title" />
 
         <SwitchPreferenceCompat
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:key="manage_speaker_beep"
             app:summaryOff="@string/speaker_beep_off_summary"
             app:summaryOn="@string/speaker_beep_on_summary"
