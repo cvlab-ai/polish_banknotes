@@ -25,7 +25,7 @@ class Beeper(var context: Context) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val speakerBeepOnOff = "manage_speaker_beep"
 
-        isActive = sharedPreferences.getBoolean(speakerBeepOnOff, true)
+        isActive = sharedPreferences.getBoolean(speakerBeepOnOff, false)
     }
 
     fun getIsActive(): Boolean {
