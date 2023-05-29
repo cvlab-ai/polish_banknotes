@@ -367,15 +367,18 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             lastLabels.add(0, result)
 
             // label is the result that have the most occurrences in lastLabels list
-            var label = lastLabels.groupingBy { it }.eachCount().toList()
-                .maxByOrNull { (_, value) -> value }!!.first
+            var label: String? = "None"
+            if(lastLabels.size == NUMBER_OF_LAST_RESULTS && !lastLabels[0].equals("None") && lastLabels.all { it == lastLabels[0] }) {
+                label = lastLabels[0]
+                lastLabels.clear()
+            }
 
             // If the user changed the banknote at the end of inference
             // and most of labels was from the one before.
             if(label == null || label != result)
                 label = "None"
 
-            if (label != "None" && lastLabels.size == NUMBER_OF_LAST_RESULTS) {
+            if (label != "None") {
 
                 // We want only to beep at highest denominations.
                 when (label) {
@@ -413,8 +416,6 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
                             labelManager.getsShowLabelMillis()
                         )
                 }
-
-                lastLabels.clear()
             }
 
             lastResultLabel = label
