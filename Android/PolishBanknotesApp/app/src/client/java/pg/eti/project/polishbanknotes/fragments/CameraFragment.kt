@@ -46,16 +46,13 @@ import pg.eti.project.polishbanknotes.sensors.TorchManager
 import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.ceil
 
 /**
  * Number of last results that will be considered for choosing final label
  * (most occurrences in last NUMBER_OF_LAST_RESULTS)
  */
-// TODO optimization: auto select inference counter for older devices.
-//  on Xiaomi Redmi 6A the app is slow and inference is giving message even if not
-//  pointing on banknote.
-// TODO question: is it needed?
-const val NUMBER_OF_LAST_RESULTS = 5
+
 const val SLIGHTLY_MORE_MILLIS = 500L
 
 class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
@@ -96,6 +93,8 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
     private var classificationActive = true
     private var inferenceMillisCounter: Long = 0L
     private var lastLabels = mutableListOf<String?>()
+    private var inferenceCounter = 0
+    private var NUMBER_OF_LAST_RESULTS = 5
     private lateinit var beeper: Beeper
 
     private lateinit var haptizer: Haptizer
@@ -354,6 +353,16 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
             // Show result on bottom sheet
             classificationResultsAdapter.updateResults(results)
             classificationResultsAdapter.notifyDataSetChanged()
+
+            if(inferenceCounter <= 4) {
+                if(inferenceCounter == 4) {
+                    val lastResultsCalculation: Int = ceil(1000 / inferenceTime.toDouble()).toInt()
+
+                    if(lastResultsCalculation > 5)
+                        NUMBER_OF_LAST_RESULTS = lastResultsCalculation
+                }
+                inferenceCounter++
+            }
 
             val result: String? = if(results?.isEmpty() == true || results!![0].categories.isEmpty()){
                 null
