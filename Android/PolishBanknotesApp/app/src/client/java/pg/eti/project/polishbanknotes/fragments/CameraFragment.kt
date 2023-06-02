@@ -46,7 +46,7 @@ import pg.eti.project.polishbanknotes.sensors.TorchManager
 import pg.eti.project.polishbanknotes.settings_management.LabelManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * Number of last results that will be considered for choosing final label
@@ -356,7 +356,7 @@ class CameraFragment : Fragment(), ImageClassifierHelper.ClassifierListener {
 
             if(inferenceCounter <= 4) {
                 if(inferenceCounter == 4) {
-                    val lastResultsCalculation: Int = ceil(1000 / inferenceTime.toDouble()).toInt()
+                    val lastResultsCalculation: Int = floor(500 / inferenceTime.toDouble()).toInt()
 
                     if(lastResultsCalculation > 5)
                         NUMBER_OF_LAST_RESULTS = lastResultsCalculation
