@@ -17,7 +17,7 @@ class ContentViewModel: ObservableObject {
     @Published var frame: CGImage?
     @Published var predictions: ClassifierOutput = ClassifierOutput(classLabelProbs: ["": 0], classLabel: "")
     
-    var developerMode = true
+    var developerMode = false
     
     private let cameraManager = CameraManager.shared
     private let frameManager = FrameManager.shared
@@ -69,7 +69,15 @@ class ContentViewModel: ObservableObject {
             }
             .collect(predictionSize)
             .map { predictions in // here will be functionality of merging multiple predictions into one output
-                return predictions[0]
+                let allTheSame = predictions.allSatisfy {
+                    $0.classLabel == predictions.first?.classLabel
+                }
+                
+                if allTheSame {
+                    return predictions[0]
+                }
+                
+                return ClassifierOutput(classLabelProbs: ["none": 1.0], classLabel: "none")
             }
             .sink { [weak self] predictions in
                 self?.predictions = predictions

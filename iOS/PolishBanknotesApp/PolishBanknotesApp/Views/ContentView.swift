@@ -35,11 +35,10 @@ struct ContentView: View {
                                   predictions: model.predictions.getTopNPredictions(n: 3),
                                   onCompletion: self.onCompletion)
                 } else {
-                    Spacer()
-                    
                     Text(model.predictions.classLabel)
                         .accessibilityHidden(false)
-                        .foregroundColor(.white)
+                        .foregroundColor(.yellow)
+                        .font(.system(size: 190))
                         .shadow(color: .black, radius: 1)
                 }
             }
