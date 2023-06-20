@@ -7,14 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		350703EE29DC493C0095FBAB /* MobileNetV2Int8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 350703ED29DC493C0095FBAB /* MobileNetV2Int8LUT.mlmodel */; };
 		356516C9291C51F5006A460B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 356516C8291C51F5006A460B /* Assets.xcassets */; };
 		356516CC291C51F5006A460B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 356516CB291C51F5006A460B /* Preview Assets.xcassets */; };
+		35A65BF92A4229BD008EEF76 /* model_ml.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 35A65BF82A4229BD008EEF76 /* model_ml.mlmodel */; };
 		35AE2B622A4213170023D8B4 /* TorchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AE2B612A4213170023D8B4 /* TorchManager.swift */; };
-		35D71B7D297D6B2A00C9D572 /* Resnet50-2.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 35E7F2B7297C29EC006A20FC /* Resnet50-2.mlmodel */; };
-		35D71B8529809A0700C9D572 /* yolov5s-cls.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 35D71B8429809A0700C9D572 /* yolov5s-cls.mlmodel */; };
-		35D71B8729886D2F00C9D572 /* model_ml.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 35D71B8629886D2F00C9D572 /* model_ml.mlmodel */; };
-		35D71B89298889B600C9D572 /* model_ml1.mlkitmodel in Sources */ = {isa = PBXBuildFile; fileRef = 35D71B88298889B600C9D572 /* model_ml1.mlkitmodel */; };
 		35E7F286297C2686006A20FC /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E7F285297C2686006A20FC /* App.swift */; };
 		35E7F292297C279D006A20FC /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E7F291297C279D006A20FC /* ContentViewModel.swift */; };
 		35E7F294297C27AD006A20FC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E7F293297C27AD006A20FC /* ContentView.swift */; };
@@ -36,14 +32,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		350703ED29DC493C0095FBAB /* MobileNetV2Int8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MobileNetV2Int8LUT.mlmodel; sourceTree = "<group>"; };
 		356516C1291C51F4006A460B /* PolishBanknotesApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PolishBanknotesApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		356516C8291C51F5006A460B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		356516CB291C51F5006A460B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		35A65BF82A4229BD008EEF76 /* model_ml.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_ml.mlmodel; sourceTree = "<group>"; };
 		35AE2B612A4213170023D8B4 /* TorchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchManager.swift; sourceTree = "<group>"; };
-		35D71B8429809A0700C9D572 /* yolov5s-cls.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "yolov5s-cls.mlmodel"; sourceTree = "<group>"; };
-		35D71B8629886D2F00C9D572 /* model_ml.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_ml.mlmodel; sourceTree = "<group>"; };
-		35D71B88298889B600C9D572 /* model_ml1.mlkitmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = model_ml1.mlkitmodel; sourceTree = "<group>"; };
 		35E7F285297C2686006A20FC /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		35E7F291297C279D006A20FC /* ContentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		35E7F293297C27AD006A20FC /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -62,7 +55,6 @@
 		35E7F2AD297C28A4006A20FC /* FrameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameManager.swift; sourceTree = "<group>"; };
 		35E7F2AE297C28A4006A20FC /* CameraError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraError.swift; sourceTree = "<group>"; };
 		35E7F2B2297C28B8006A20FC /* DeviceRotationModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceRotationModifier.swift; sourceTree = "<group>"; };
-		35E7F2B7297C29EC006A20FC /* Resnet50-2.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "Resnet50-2.mlmodel"; sourceTree = "<group>"; };
 		35E7F2B9297C2A56006A20FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -182,11 +174,7 @@
 		35E7F28C297C26FC006A20FC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				350703ED29DC493C0095FBAB /* MobileNetV2Int8LUT.mlmodel */,
-				35D71B88298889B600C9D572 /* model_ml1.mlkitmodel */,
-				35D71B8629886D2F00C9D572 /* model_ml.mlmodel */,
-				35D71B8429809A0700C9D572 /* yolov5s-cls.mlmodel */,
-				35E7F2B7297C29EC006A20FC /* Resnet50-2.mlmodel */,
+				35A65BF82A4229BD008EEF76 /* model_ml.mlmodel */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -281,19 +269,15 @@
 				35E7F294297C27AD006A20FC /* ContentView.swift in Sources */,
 				35E7F286297C2686006A20FC /* App.swift in Sources */,
 				35E7F2AB297C282A006A20FC /* UIDeviceOrientationExtension.swift in Sources */,
-				35D71B7D297D6B2A00C9D572 /* Resnet50-2.mlmodel in Sources */,
-				35D71B8729886D2F00C9D572 /* model_ml.mlmodel in Sources */,
+				35A65BF92A4229BD008EEF76 /* model_ml.mlmodel in Sources */,
 				35E7F2B3297C28B8006A20FC /* DeviceRotationModifier.swift in Sources */,
 				35E7F2A8297C282A006A20FC /* ViewExtension.swift in Sources */,
 				35E7F29A297C27B9006A20FC /* DeveloperView.swift in Sources */,
 				35E7F29C297C27B9006A20FC /* ErrorView.swift in Sources */,
-				350703EE29DC493C0095FBAB /* MobileNetV2Int8LUT.mlmodel in Sources */,
 				35E7F2A9297C282A006A20FC /* ClassifierOutputExtension.swift in Sources */,
 				35E7F2A7297C282A006A20FC /* PublisherExtension.swift in Sources */,
 				35E7F2A0297C2810006A20FC /* ClassifierError.swift in Sources */,
 				35E7F2AA297C282A006A20FC /* CGImageExtension.swift in Sources */,
-				35D71B89298889B600C9D572 /* model_ml1.mlkitmodel in Sources */,
-				35D71B8529809A0700C9D572 /* yolov5s-cls.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

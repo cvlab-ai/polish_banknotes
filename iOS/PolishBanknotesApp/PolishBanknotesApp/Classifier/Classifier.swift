@@ -12,7 +12,7 @@ class Classifier {
     @Published var error: Error?
     
     static let shared = Classifier()
-    private let defaultModelURL = Bundle.main.url(forResource: "model_ml1", withExtension: "mlmodelc")!
+    private let defaultModelURL = Bundle.main.url(forResource: "model_ml", withExtension: "mlmodelc")!
     private var currentModelURL: URL;
     private let dispatchQueue = DispatchQueue(label: "classifier.queue", qos: .userInitiated)
     
