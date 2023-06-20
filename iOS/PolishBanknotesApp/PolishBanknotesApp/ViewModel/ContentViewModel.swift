@@ -9,6 +9,8 @@ import Foundation
 import CoreImage
 import Vision
 import Combine
+import AVFoundation
+import UIKit
 
 class ContentViewModel: ObservableObject {
     @Published var error: Error?
@@ -19,10 +21,13 @@ class ContentViewModel: ObservableObject {
     
     private let cameraManager = CameraManager.shared
     private let frameManager = FrameManager.shared
+    private let torchManager = TorchManager()
     private var frameCount = 0
     private let classifier = Classifier.shared
     
-    private var framePredictionSubscription: AnyCancellable?;
+    private var framePredictionSubscription: AnyCancellable?
+    
+    // fps ~= 30, predictionRate = 2 => ~ 15fps (every 2nd frame)
     private let predictionRate = 5
     private let predictionSize = 5
     
@@ -41,7 +46,6 @@ class ContentViewModel: ObservableObject {
         
         framePredictionSubscription?.cancel()
         
-        // fps ~= 30, predictionRate = 2 => ~ 15fps (every 2nd frame)
         framePredictionSubscription = predictionSubscription()
     }
     
@@ -79,8 +83,20 @@ class ContentViewModel: ObservableObject {
             .assign(to: &$error)
         
         frameManager.$current
-            .receive(on: RunLoop.main)
             .compactMap { buffer in
+                if (buffer != nil) {
+                    let rawMetadata = CMCopyDictionaryOfAttachments(allocator: nil, target: buffer!, attachmentMode: CMAttachmentMode(kCMAttachmentMode_ShouldPropagate))
+                    let metadata = CFDictionaryCreateMutableCopy(nil, 0, rawMetadata) as NSMutableDictionary
+                    let directory = metadata.value(forKey: "MetadataDictionary") as? NSMutableDictionary
+                    let luxLevel = directory?.value(forKey: "LuxLevel") as? Int
+                    
+                    if luxLevel != 0 && luxLevel ?? 21 < 20 {
+                        if !self.torchManager.isOn {
+                            self.torchManager.activateTorch(interval: 30)
+                        }
+                    }
+                }
+                
                 return CGImage.create(from: buffer)
             }
             .assign(to: &$frame)
@@ -93,4 +109,6 @@ class ContentViewModel: ObservableObject {
         
         self.framePredictionSubscription = self.predictionSubscription()
     }
+    
+    
 }
