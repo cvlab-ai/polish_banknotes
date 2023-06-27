@@ -21,7 +21,7 @@ We're developing two versions of this application - one for Android and one for 
 
 ### Neural network
 
-The neural network we're working on is based on TensorFlow+Keras Image classification. We used yolo architecture to train our best model - created by Team Android.
+The neural network we're working on is based on PyTorch Image classification which is then exported into TensorFlow Lite. We used YOLOv5s-cls architecture to train our best model - created by Team Android.
 
 ### Datasets
 
