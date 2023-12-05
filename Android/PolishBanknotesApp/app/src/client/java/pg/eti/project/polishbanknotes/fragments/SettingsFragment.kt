@@ -91,7 +91,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun loadSettings() {
         // Prepare to read from SharedPreferences
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         // Read label status and set switch.
         var keyString: String = getString(R.string.label_key)
