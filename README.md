@@ -4,7 +4,7 @@ Czytnik Polskich Banknotów is an Open Source mobile app, which goal is to help 
 
 ## Maintenance
 The app is currently maintained by jankejc:
-* github: github.com/jankejc
+* [GitHub](https://github.com/jankejc)
 * email: poprostujanko@gmail.com
 
 Feel free to add something to the project. At that moment we are looking especially for iOS, Android, AI model contributors. We highly appreciate feedback from those who would like to test the app. We also want to reach out to those who have expirience in generating data for model training purpose. We are talking about i.e. script in Blender that will generate a lot of good data for any currency in the world.  
