@@ -13,7 +13,7 @@ Thanks to this we can collect new features that may transform this app to be eve
 
 ## Download
 
-Aviable at [Play Store](https://play.google.com/store/apps/details?id=pg.eti.project.polishbanknotes)
+Available at [Play Store](https://play.google.com/store/apps/details?id=pg.eti.project.polishbanknotes)
 
 Not currently aviable at App Store.
 
