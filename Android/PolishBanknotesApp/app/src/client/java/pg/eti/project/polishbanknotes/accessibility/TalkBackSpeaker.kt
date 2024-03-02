@@ -2,10 +2,7 @@ package pg.eti.project.polishbanknotes.accessibility
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import android.util.Log
-import android.view.accessibility.AccessibilityManager
 import androidx.preference.PreferenceManager
-import pg.eti.project.polishbanknotes.settings_management.DEFAULT_PREFERENCES_FLAG
 import java.util.*
 
 class TalkBackSpeaker(context: Context) {
@@ -19,12 +16,11 @@ class TalkBackSpeaker(context: Context) {
                 val result = textToSpeech.setLanguage(Locale.getDefault())
                 if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED
-                ) {
-                    // Set English language as a backup language
-                    val englishLocale = Locale.ENGLISH
-                    val englishResult = textToSpeech.setLanguage(englishLocale)
-                    if (englishResult == TextToSpeech.LANG_MISSING_DATA
-                        || englishResult == TextToSpeech.LANG_NOT_SUPPORTED
+                ) { // Set polish language as a backup language
+                    val polishLocale = Locale("pl", "PL")
+                    val polishResult = textToSpeech.setLanguage(polishLocale)
+                    if (polishResult == TextToSpeech.LANG_MISSING_DATA
+                        || polishResult == TextToSpeech.LANG_NOT_SUPPORTED
                     ) {
 //                        Log.e("TTS", "Language not supported")
                     } else {
