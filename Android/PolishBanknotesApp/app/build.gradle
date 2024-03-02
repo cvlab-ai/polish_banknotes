@@ -4,13 +4,20 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
+}
+
 android {
     compileSdk 34
     namespace 'pg.eti.project.polishbanknotes'
 
     defaultConfig {
         applicationId "pg.eti.project.polishbanknotes"
-        minSdk 24
+        minSdk 26
         // Must be the same as compileSdk
         targetSdk 34
         versionCode 4
@@ -38,15 +45,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     buildFeatures {
         viewBinding true
         mlModelBinding true
@@ -65,22 +63,22 @@ android {
 dependencies {
 
     // Kotlin lang
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
 
     // App compat and UI things
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.4.4'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Navigation library
-    def nav_version = "2.7.5"
+    def nav_version = "2.7.7"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // CameraX core library
-    def camerax_version = '1.3.0'
+    def camerax_version = '1.3.4'
     implementation "androidx.camera:camera-core:$camerax_version"
 
     // CameraX Camera2 extensions
@@ -105,7 +103,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.4'
     // Import the GPU delegate plugin Library for GPU inference
     implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.16.1'
 
     // Settings addons
     implementation 'com.jaredrummler:colorpicker:1.1.0'
