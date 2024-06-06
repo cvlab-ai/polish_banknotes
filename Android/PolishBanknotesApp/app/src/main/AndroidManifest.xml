@@ -22,6 +22,12 @@
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        </queries>
+
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
 
@@ -57,13 +63,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <!-- Apps targeting Android 11 -->
-<!--            <queries>-->
-<!--                <intent>-->
-<!--                    <action android:name="android.intent.action.TTS_SERVICE" />-->
-<!--                </intent>-->
-<!--            </queries>-->
 
             <!-- Declare notch support -->
             <meta-data
