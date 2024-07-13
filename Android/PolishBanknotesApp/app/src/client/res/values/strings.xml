@@ -70,8 +70,8 @@
     <!-- Messages Preferences PL -->
     <!-- TalkBackSpeaker -->
     <string name="talkback_speaker_on_off_title">Wypowiadanie etykiety</string>
-    <string name="speaker_on_summary">Włączone</string>
-    <string name="speaker_off_summary">Wyłączone </string>
+    <string name="speaker_on">Włączone</string>
+    <string name="speaker_off">Wyłączone </string>
 
     <string name="speaker_beep_title">Sygnały dźwiękowe</string>
     <string name="speaker_beep_on_summary">Sygnały dźwiękowe przy 200 i 500</string>
@@ -84,14 +84,14 @@
 
     <!-- Torch -->
     <string name="manage_haptizer_title">Wibracje</string>
-    <string name="haptizer_summary_on">Włączone</string>
-    <string name="haptizer_summary_off">Wyłączone</string>
+    <string name="haptizer_on">Włączone</string>
+    <string name="haptizer_off">Wyłączone</string>
 
     <!-- Label -->
     <string name="label_key">label_on_off</string>
     <string name="label_title">Etykieta</string>
-    <string name="label_summary_on">Włączona</string>
-    <string name="label_summary_off">Wyłączona </string>
+    <string name="label_on">Włączona</string>
+    <string name="label_off">Wyłączona </string>
     <string name="label_size_title">Wielkość etykiety</string>
     <string name="label_outline_color_title">Kolor obramowania etykiety</string>
     <string name="label_outline_size_title">Szerokość obramowania etykiety</string>

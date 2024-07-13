@@ -9,17 +9,16 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="manage_torch"
-            app:summaryOff="@string/manage_torch_off"
-            app:summaryOn="@string/manage_torch_on"
+            app:switchTextOff="@string/manage_torch_off"
+            app:switchTextOn="@string/manage_torch_on"
             app:title="@string/manage_torch_title" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="manage_haptizer"
-            app:summaryOff="@string/haptizer_summary_off"
-            app:summaryOn="@string/haptizer_summary_on"
-            app:title="@string/manage_haptizer_title"
-            app:contentDescription="null"/>
+            app:switchTextOff="@string/haptizer_off"
+            app:switchTextOn="@string/haptizer_on"
+            app:title="@string/manage_haptizer_title" />
 
     </PreferenceCategory>
 
@@ -30,8 +29,8 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="manage_speaker"
-            app:summaryOff="@string/speaker_off_summary"
-            app:summaryOn="@string/speaker_on_summary"
+            app:switchTextOff="@string/speaker_off"
+            app:switchTextOn="@string/speaker_on"
             app:title="@string/talkback_speaker_on_off_title" />
 
         <SwitchPreferenceCompat
@@ -51,8 +50,8 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="@string/label_key"
-            app:summaryOff="@string/label_summary_off"
-            app:summaryOn="@string/label_summary_on"
+            app:switchTextOff="@string/label_off"
+            app:switchTextOn="@string/label_on"
             app:title="@string/label_title" />
 
         <ListPreference
